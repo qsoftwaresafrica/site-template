@@ -88,10 +88,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:locale", content: site.seo.locale },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "geo.region", content: site.seo.geo.region },
-      { name: "geo.placename", content: site.seo.geo.placename },
-      { name: "geo.position", content: site.seo.geo.position },
-      { name: "ICBM", content: site.seo.geo.position },
+      { name: "geo.region", content: `${site.seo.geo.country}-${site.seo.geo.region}` },
+      { name: "geo.placename", content: site.seo.geo.locality },
+      {
+        name: "geo.position",
+        content: `${site.seo.geo.latitude};${site.seo.geo.longitude}`,
+      },
+      { name: "ICBM", content: `${site.seo.geo.latitude}, ${site.seo.geo.longitude}` },
       { name: "theme-color", content: site.seo.themeColor },
     ],
     links: [
