@@ -65,13 +65,13 @@ export function Hero({ hero }: { hero: HeroSettings }) {
 
           <div className="mt-9 flex flex-wrap gap-3">
             {current?.ctaHref ? (
-              <Link
-                to={current.ctaHref}
+              <a
+                href={current.ctaHref}
                 className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
               >
                 {current.ctaLabel || "Learn more"}
                 <ArrowRight size={16} />
-              </Link>
+              </a>
             ) : null}
             <Link
               to="/contacts"
