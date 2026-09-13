@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ApiPublicMediaIdRouteImport } from './routes/api/public/media.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesIndexRoute = ServicesIndexRouteImport.update({
+  id: '/services/',
+  path: '/services/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMediaIdRoute = ApiPublicMediaIdRouteImport.update({
   id: '/api/public/media/$id',
   path: '/api/public/media/$id',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/about-us': typeof AboutUsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/services/': typeof ServicesIndexRoute
   '/api/public/media/$id': typeof ApiPublicMediaIdRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/about-us': typeof AboutUsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/services': typeof ServicesIndexRoute
   '/api/public/media/$id': typeof ApiPublicMediaIdRoute
 }
 export interface FileRoutesById {
@@ -61,21 +69,33 @@ export interface FileRoutesById {
   '/about-us': typeof AboutUsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/services/': typeof ServicesIndexRoute
   '/api/public/media/$id': typeof ApiPublicMediaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about-us' | '/robots.txt' | '/sitemap.xml' | '/api/public/media/$id'
+    | '/'
+    | '/about-us'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/services/'
+    | '/api/public/media/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/about-us' | '/robots.txt' | '/sitemap.xml' | '/api/public/media/$id'
+    | '/'
+    | '/about-us'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/services'
+    | '/api/public/media/$id'
   id:
     | '__root__'
     | '/'
     | '/about-us'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/services/'
     | '/api/public/media/$id'
   fileRoutesById: FileRoutesById
 }
@@ -84,6 +104,7 @@ export interface RootRouteChildren {
   AboutUsRoute: typeof AboutUsRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
   ApiPublicMediaIdRoute: typeof ApiPublicMediaIdRoute
 }
 
@@ -117,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/': {
+      id: '/services/'
+      path: '/services'
+      fullPath: '/services/'
+      preLoaderRoute: typeof ServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/media/$id': {
       id: '/api/public/media/$id'
       path: '/api/public/media/$id'
@@ -132,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutUsRoute: AboutUsRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
   ApiPublicMediaIdRoute: ApiPublicMediaIdRoute,
 }
 export const routeTree = rootRouteImport
