@@ -1,0 +1,230 @@
+{
+  "$comment": "Single source of truth for branding. Swap this file + /public/logo.png and the whole site becomes another company's.",
+  "brand": {
+    "name": "Baleyna",
+    "legalName": "Baleyna Secretarial Company Ltd",
+    "shortName": "Baleyna Secretarial",
+    "tagline": "Secretarial",
+    "motto": "Business and investment consultancy, start to finish.",
+    "logo": "/logo.png",
+    "logoDark": "/logo.png",
+    "favicon": "/favicon.png",
+    "foundedYear": 2016
+  },
+  "seo": {
+    "titleTemplate": "%s | Baleyna Secretarial",
+    "defaultTitle": "Baleyna Secretarial | Company Registration & Business Consultancy",
+    "defaultDescription": "Company registration, business licences, permits and bankable business plans for local and foreign investors in Tanzania.",
+    "keywords": [
+      "company registration",
+      "business licences",
+      "work permits",
+      "business plans",
+      "Tanzania company formation"
+    ],
+    "locale": "en_US",
+    "twitterHandle": "",
+    "organizationType": "ProfessionalService",
+    "themeColor": "#1c1a17",
+    "geo": {
+      "country": "TZ",
+      "region": "Dar es Salaam",
+      "locality": "Dar es Salaam",
+      "street": "KKKT Ground, Kurasini",
+      "postalCode": "5614",
+      "latitude": -6.8359,
+      "longitude": 39.2803
+    }
+  },
+  "theme": {
+    "active": "sand",
+    "font": {
+      "heading": "Figtree",
+      "body": "Figtree",
+      "mono": "JetBrains Mono"
+    },
+    "radius": "0.625rem",
+    "presets": {
+      "sand": {
+        "label": "Sand & Ink",
+        "light": {
+          "background": "oklch(0.995 0.003 90)",
+          "foreground": "oklch(0.21 0.015 60)",
+          "card": "oklch(1 0 0)",
+          "card-foreground": "oklch(0.21 0.015 60)",
+          "popover": "oklch(1 0 0)",
+          "popover-foreground": "oklch(0.21 0.015 60)",
+          "primary": "oklch(0.68 0.058 72)",
+          "primary-foreground": "oklch(0.18 0.012 60)",
+          "secondary": "oklch(0.955 0.012 85)",
+          "secondary-foreground": "oklch(0.27 0.018 65)",
+          "muted": "oklch(0.962 0.008 85)",
+          "muted-foreground": "oklch(0.52 0.018 70)",
+          "accent": "oklch(0.93 0.028 78)",
+          "accent-foreground": "oklch(0.24 0.018 62)",
+          "destructive": "oklch(0.58 0.21 27)",
+          "destructive-foreground": "oklch(0.98 0.005 90)",
+          "border": "oklch(0.91 0.012 82)",
+          "input": "oklch(0.91 0.012 82)",
+          "ring": "oklch(0.68 0.058 72)",
+          "ink": "oklch(0.16 0.008 60)",
+          "ink-foreground": "oklch(0.97 0.005 90)"
+        },
+        "dark": {
+          "background": "oklch(0.17 0.01 60)",
+          "foreground": "oklch(0.96 0.006 88)",
+          "card": "oklch(0.215 0.012 62)",
+          "card-foreground": "oklch(0.96 0.006 88)",
+          "popover": "oklch(0.215 0.012 62)",
+          "popover-foreground": "oklch(0.96 0.006 88)",
+          "primary": "oklch(0.74 0.062 74)",
+          "primary-foreground": "oklch(0.17 0.01 60)",
+          "secondary": "oklch(0.27 0.014 62)",
+          "secondary-foreground": "oklch(0.96 0.006 88)",
+          "muted": "oklch(0.27 0.014 62)",
+          "muted-foreground": "oklch(0.72 0.016 78)",
+          "accent": "oklch(0.32 0.024 70)",
+          "accent-foreground": "oklch(0.96 0.006 88)",
+          "destructive": "oklch(0.66 0.19 25)",
+          "destructive-foreground": "oklch(0.98 0.005 90)",
+          "border": "oklch(1 0 0 / 12%)",
+          "input": "oklch(1 0 0 / 16%)",
+          "ring": "oklch(0.74 0.062 74)",
+          "ink": "oklch(0.12 0.006 60)",
+          "ink-foreground": "oklch(0.97 0.005 90)"
+        }
+      },
+      "emerald": {
+        "label": "Emerald Corporate",
+        "light": {
+          "background": "oklch(0.995 0.003 150)",
+          "foreground": "oklch(0.2 0.02 160)",
+          "card": "oklch(1 0 0)",
+          "card-foreground": "oklch(0.2 0.02 160)",
+          "popover": "oklch(1 0 0)",
+          "popover-foreground": "oklch(0.2 0.02 160)",
+          "primary": "oklch(0.52 0.13 155)",
+          "primary-foreground": "oklch(0.99 0.005 150)",
+          "secondary": "oklch(0.955 0.014 155)",
+          "secondary-foreground": "oklch(0.27 0.03 158)",
+          "muted": "oklch(0.962 0.01 155)",
+          "muted-foreground": "oklch(0.5 0.022 158)",
+          "accent": "oklch(0.92 0.04 155)",
+          "accent-foreground": "oklch(0.24 0.03 158)",
+          "destructive": "oklch(0.58 0.21 27)",
+          "destructive-foreground": "oklch(0.98 0.005 150)",
+          "border": "oklch(0.905 0.014 155)",
+          "input": "oklch(0.905 0.014 155)",
+          "ring": "oklch(0.52 0.13 155)",
+          "ink": "oklch(0.17 0.02 160)",
+          "ink-foreground": "oklch(0.97 0.005 150)"
+        },
+        "dark": {
+          "background": "oklch(0.16 0.02 160)",
+          "foreground": "oklch(0.96 0.008 150)",
+          "card": "oklch(0.21 0.024 160)",
+          "card-foreground": "oklch(0.96 0.008 150)",
+          "popover": "oklch(0.21 0.024 160)",
+          "popover-foreground": "oklch(0.96 0.008 150)",
+          "primary": "oklch(0.66 0.15 155)",
+          "primary-foreground": "oklch(0.14 0.02 160)",
+          "secondary": "oklch(0.26 0.026 160)",
+          "secondary-foreground": "oklch(0.96 0.008 150)",
+          "muted": "oklch(0.26 0.026 160)",
+          "muted-foreground": "oklch(0.72 0.02 152)",
+          "accent": "oklch(0.31 0.04 156)",
+          "accent-foreground": "oklch(0.96 0.008 150)",
+          "destructive": "oklch(0.66 0.19 25)",
+          "destructive-foreground": "oklch(0.98 0.005 150)",
+          "border": "oklch(1 0 0 / 12%)",
+          "input": "oklch(1 0 0 / 16%)",
+          "ring": "oklch(0.66 0.15 155)",
+          "ink": "oklch(0.12 0.016 160)",
+          "ink-foreground": "oklch(0.97 0.005 150)"
+        }
+      },
+      "midnight": {
+        "label": "Midnight Blue",
+        "light": {
+          "background": "oklch(0.995 0.003 250)",
+          "foreground": "oklch(0.2 0.03 260)",
+          "card": "oklch(1 0 0)",
+          "card-foreground": "oklch(0.2 0.03 260)",
+          "popover": "oklch(1 0 0)",
+          "popover-foreground": "oklch(0.2 0.03 260)",
+          "primary": "oklch(0.48 0.15 258)",
+          "primary-foreground": "oklch(0.99 0.005 250)",
+          "secondary": "oklch(0.955 0.012 250)",
+          "secondary-foreground": "oklch(0.27 0.035 258)",
+          "muted": "oklch(0.962 0.01 250)",
+          "muted-foreground": "oklch(0.5 0.025 255)",
+          "accent": "oklch(0.92 0.035 252)",
+          "accent-foreground": "oklch(0.24 0.035 258)",
+          "destructive": "oklch(0.58 0.21 27)",
+          "destructive-foreground": "oklch(0.98 0.005 250)",
+          "border": "oklch(0.905 0.012 250)",
+          "input": "oklch(0.905 0.012 250)",
+          "ring": "oklch(0.48 0.15 258)",
+          "ink": "oklch(0.17 0.03 260)",
+          "ink-foreground": "oklch(0.97 0.005 250)"
+        },
+        "dark": {
+          "background": "oklch(0.16 0.026 260)",
+          "foreground": "oklch(0.96 0.008 250)",
+          "card": "oklch(0.21 0.03 260)",
+          "card-foreground": "oklch(0.96 0.008 250)",
+          "popover": "oklch(0.21 0.03 260)",
+          "popover-foreground": "oklch(0.96 0.008 250)",
+          "primary": "oklch(0.68 0.14 258)",
+          "primary-foreground": "oklch(0.14 0.026 260)",
+          "secondary": "oklch(0.26 0.03 260)",
+          "secondary-foreground": "oklch(0.96 0.008 250)",
+          "muted": "oklch(0.26 0.03 260)",
+          "muted-foreground": "oklch(0.72 0.022 252)",
+          "accent": "oklch(0.31 0.045 256)",
+          "accent-foreground": "oklch(0.96 0.008 250)",
+          "destructive": "oklch(0.66 0.19 25)",
+          "destructive-foreground": "oklch(0.98 0.005 250)",
+          "border": "oklch(1 0 0 / 12%)",
+          "input": "oklch(1 0 0 / 16%)",
+          "ring": "oklch(0.68 0.14 258)",
+          "ink": "oklch(0.12 0.022 260)",
+          "ink-foreground": "oklch(0.97 0.005 250)"
+        }
+      }
+    }
+  },
+  "navigation": {
+    "primary": [
+      { "label": "Home", "to": "/" },
+      { "label": "About Us", "to": "/about-us" },
+      { "label": "Our Services", "to": "/services", "dynamic": "services" },
+      { "label": "Blog", "to": "/blog", "requires": "articles" },
+      { "label": "Gallery", "to": "/gallery", "requires": "photos" },
+      { "label": "Contact Us", "to": "/contacts" }
+    ],
+    "quickLinks": [
+      { "label": "Business Registration and Licensing Agency (BRELA)", "href": "https://www.brela.go.tz" },
+      { "label": "Tanzania Revenue Authority (TRA)", "href": "https://www.tra.go.tz" },
+      { "label": "Tanzania Investment Centre (TIC)", "href": "https://www.tic.go.tz" }
+    ]
+  },
+  "partner": {
+    "enabled": true,
+    "prefix": "Official Partner of",
+    "label": "QSA",
+    "href": "https://qsotwares.co.tz/partners"
+  },
+  "features": {
+    "blog": true,
+    "gallery": true,
+    "team": true,
+    "map": true,
+    "darkModeToggle": true
+  },
+  "limits": {
+    "galleryMaxPhotos": 85,
+    "blogPageSize": 6
+  },
+  "copyright": "Baleyna Secretarial Company Ltd"
+}
