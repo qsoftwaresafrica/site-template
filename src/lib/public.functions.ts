@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest, getRequestHeader } from "@tanstack/react-start/server";
+
 import { z } from "zod";
 
 export type HeroSlide = {
@@ -48,11 +48,9 @@ export type Bootstrap = {
   services: { slug: string; title: string }[];
 };
 
-export function requestOrigin(): string {
-  const req = getRequest();
-  const url = new URL(req.url);
-  const forwarded = url.hostname === "localhost" ? getRequestHeader("x-forwarded-host") : null;
-  return forwarded ? `https://${forwarded}` : url.origin;
+async function requestOrigin(): Promise<string> {
+  const { requestOrigin: fn } = await import("./origin.server");
+  return fn();
 }
 
 export const getBootstrap = createServerFn({ method: "GET" }).handler(
@@ -75,7 +73,7 @@ export const getBootstrap = createServerFn({ method: "GET" }).handler(
     const map = new Map((settings.data ?? []).map((r) => [r.key, r.value]));
 
     return {
-      origin: requestOrigin(),
+      origin: await requestOrigin(),
       hero: map.get("hero") as HeroSettings,
       contacts: map.get("contacts") as ContactSettings,
       about: map.get("about") as AboutSettings,
@@ -175,7 +173,7 @@ export const getArticle = createServerFn({ method: "GET" })
       .neq("slug", data.slug)
       .order("published_at", { ascending: false })
       .limit(3);
-    return { article, more: more ?? [], origin: requestOrigin() };
+    return { article, more: more ?? [], origin: await requestOrigin() };
   });
 
 export const listGallery = createServerFn({ method: "GET" }).handler(async () => {
