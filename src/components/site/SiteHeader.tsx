@@ -41,7 +41,11 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
   const email = data.contacts?.emails?.[0];
 
   return (
-    <header className="sticky top-0 z-50">
+    <header
+      className={`sticky top-0 z-50 transition-transform duration-300 ease-out ${
+        hidden && !open ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       {/* thin ink stripe with socials */}
       <div className="bg-ink text-ink-foreground">
         <div className="container-page flex h-9 items-center justify-between gap-4 text-xs">
