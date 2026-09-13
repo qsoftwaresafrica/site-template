@@ -14,7 +14,381 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      articles: {
+        Row: {
+          author: string
+          body: string
+          cover_id: string | null
+          cover_url: string | null
+          created_at: string
+          excerpt: string
+          id: string
+          published_at: string | null
+          slug: string
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          body?: string
+          cover_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published_at?: string | null
+          slug: string
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          body?: string
+          cover_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published_at?: string | null
+          slug?: string
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_cover_id_fkey"
+            columns: ["cover_id"]
+            isOneToOne: false
+            referencedRelation: "media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gallery_photos: {
+        Row: {
+          caption: string
+          category: string
+          created_at: string
+          height: number | null
+          id: string
+          image_url: string | null
+          media_id: string | null
+          posted_on: string
+          width: number | null
+        }
+        Insert: {
+          caption?: string
+          category?: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          image_url?: string | null
+          media_id?: string | null
+          posted_on?: string
+          width?: number | null
+        }
+        Update: {
+          caption?: string
+          category?: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          image_url?: string | null
+          media_id?: string | null
+          posted_on?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_photos_media_id_fkey"
+            columns: ["media_id"]
+            isOneToOne: false
+            referencedRelation: "media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          handled: boolean
+          id: string
+          message: string
+          name: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          handled?: boolean
+          id?: string
+          message?: string
+          name: string
+          subject?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          handled?: boolean
+          id?: string
+          message?: string
+          name?: string
+          subject?: string
+        }
+        Relationships: []
+      }
+      media: {
+        Row: {
+          alt: string | null
+          byte_size: number
+          bytes: string
+          created_at: string
+          filename: string
+          height: number | null
+          id: string
+          mime: string
+          width: number | null
+        }
+        Insert: {
+          alt?: string | null
+          byte_size?: number
+          bytes: string
+          created_at?: string
+          filename: string
+          height?: number | null
+          id?: string
+          mime: string
+          width?: number | null
+        }
+        Update: {
+          alt?: string | null
+          byte_size?: number
+          bytes?: string
+          created_at?: string
+          filename?: string
+          height?: number | null
+          id?: string
+          mime?: string
+          width?: number | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          body: string
+          created_at: string
+          highlights: Json
+          icon: string
+          id: string
+          image_id: string | null
+          order_index: number
+          published: boolean
+          slug: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          highlights?: Json
+          icon?: string
+          id?: string
+          image_id?: string | null
+          order_index?: number
+          published?: boolean
+          slug: string
+          summary?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          highlights?: Json
+          icon?: string
+          id?: string
+          image_id?: string | null
+          order_index?: number
+          published?: boolean
+          slug?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      site_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "site_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_users: {
+        Row: {
+          active: boolean
+          created_at: string
+          email: string
+          id: string
+          name: string
+          password_hash: string
+          phone: string | null
+          photo_id: string | null
+          role: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          password_hash: string
+          phone?: string | null
+          photo_id?: string | null
+          role?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          password_hash?: string
+          phone?: string | null
+          photo_id?: string | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_users_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      socials: {
+        Row: {
+          enabled: boolean
+          id: string
+          order_index: number
+          platform: string
+          url: string
+        }
+        Insert: {
+          enabled?: boolean
+          id?: string
+          order_index?: number
+          platform: string
+          url?: string
+        }
+        Update: {
+          enabled?: boolean
+          id?: string
+          order_index?: number
+          platform?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          bio: string
+          created_at: string
+          id: string
+          name: string
+          order_index: number
+          photo_id: string | null
+          photo_url: string | null
+          role: string
+        }
+        Insert: {
+          bio?: string
+          created_at?: string
+          id?: string
+          name: string
+          order_index?: number
+          photo_id?: string | null
+          photo_url?: string | null
+          role?: string
+        }
+        Update: {
+          bio?: string
+          created_at?: string
+          id?: string
+          name?: string
+          order_index?: number
+          photo_id?: string | null
+          photo_url?: string | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
