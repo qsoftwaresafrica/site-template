@@ -180,4 +180,4 @@ function HomePage() {
   );
 }
 
-export { imageOf, pageTitle };
+
