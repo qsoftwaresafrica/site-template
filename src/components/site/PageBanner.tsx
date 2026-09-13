@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+import { site } from "@/lib/site";
 
 export function PageBanner({
   title,
@@ -10,19 +11,14 @@ export function PageBanner({
   crumb: string;
   image?: string | null;
 }) {
+  const bg = image || site.brand.bannerImage;
   return (
     <section className="relative isolate overflow-hidden">
-      {image ? (
-        <>
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${image})` }}
-          />
-          <div className="absolute inset-0 bg-ink/75" />
-        </>
-      ) : (
-        <div className="absolute inset-0 bg-ink" />
-      )}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bg})` }}
+      />
+      <div className="absolute inset-0 bg-ink/70" />
       <div className="container-page relative py-16 sm:py-20">
         <h1 className="font-display text-3xl font-black text-ink-foreground sm:text-4xl">
           {title}
