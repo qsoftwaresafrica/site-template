@@ -16,10 +16,12 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/blog/")({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ q: search.q, page: search.page }),
-  loader: async ({ deps }) => ({
-    list: await listArticles({ data: { q: deps.q, page: deps.page } }),
-    recent: await listRecentArticles(),
-  }),
+  loader: async ({ deps }) => {
+    const input: { q?: string; page?: number } = {};
+    if (deps.q) input.q = deps.q;
+    if (deps.page) input.page = deps.page;
+    return { list: await listArticles({ data: input }), recent: await listRecentArticles() };
+  },
   head: () => {
     const title = pageTitle("Blog");
     const description = `Guides and updates on company registration, licensing and doing business, from ${site.brand.legalName}.`;
