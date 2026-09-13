@@ -73,7 +73,7 @@ export const getBootstrap = createServerFn({ method: "GET" }).handler(
     const map = new Map((settings.data ?? []).map((r) => [r.key, r.value]));
 
     return {
-      origin: requestOrigin(),
+      origin: await requestOrigin(),
       hero: map.get("hero") as HeroSettings,
       contacts: map.get("contacts") as ContactSettings,
       about: map.get("about") as AboutSettings,
@@ -173,7 +173,7 @@ export const getArticle = createServerFn({ method: "GET" })
       .neq("slug", data.slug)
       .order("published_at", { ascending: false })
       .limit(3);
-    return { article, more: more ?? [], origin: requestOrigin() };
+    return { article, more: more ?? [], origin: await requestOrigin() };
   });
 
 export const listGallery = createServerFn({ method: "GET" }).handler(async () => {
