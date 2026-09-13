@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+import { site } from "@/lib/site";
 
 export function PageBanner({
   title,
