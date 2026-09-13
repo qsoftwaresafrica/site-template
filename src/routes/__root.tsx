@@ -149,7 +149,7 @@ function RootComponent() {
       addressLocality: site.seo.geo.locality,
       addressCountry: site.seo.geo.country,
     },
-    areaServed: site.seo.geo.placename,
+    areaServed: site.seo.geo.locality,
     sameAs: data.socials.map((s) => s.url),
   };
 
