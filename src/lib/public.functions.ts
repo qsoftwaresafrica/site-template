@@ -48,11 +48,9 @@ export type Bootstrap = {
   services: { slug: string; title: string }[];
 };
 
-export function requestOrigin(): string {
-  const req = getRequest();
-  const url = new URL(req.url);
-  const forwarded = url.hostname === "localhost" ? getRequestHeader("x-forwarded-host") : null;
-  return forwarded ? `https://${forwarded}` : url.origin;
+async function requestOrigin(): Promise<string> {
+  const { requestOrigin: fn } = await import("./origin.server");
+  return fn();
 }
 
 export const getBootstrap = createServerFn({ method: "GET" }).handler(
