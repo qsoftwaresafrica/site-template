@@ -146,7 +146,7 @@ function RootComponent() {
     address: {
       "@type": "PostalAddress",
       streetAddress: data.contacts?.addressLines?.join(", "),
-      addressLocality: site.seo.geo.placename,
+      addressLocality: site.seo.geo.locality,
       addressCountry: site.seo.geo.country,
     },
     areaServed: site.seo.geo.placename,
