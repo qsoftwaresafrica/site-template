@@ -2,9 +2,9 @@ export type UploadPayload = {
   filename: string;
   mime: string;
   base64: string;
-  width?: number;
-  height?: number;
-  alt?: string;
+  width?: number | undefined;
+  height?: number | undefined;
+  alt?: string | undefined;
 };
 
 function readBase64(file: File): Promise<string> {
