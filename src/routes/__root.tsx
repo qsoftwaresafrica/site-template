@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -15,6 +16,7 @@ import { site, themeCss, googleFontsHref } from "@/lib/site";
 import { getBootstrap } from "@/lib/public.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -178,6 +180,7 @@ function RootComponent() {
         </main>
         <SiteFooter data={data} />
       </div>
+      <Toaster position="top-right" richColors />
     </QueryClientProvider>
   );
 }
