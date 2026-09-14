@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { Json } from "@/integrations/supabase/types";
 
 export type AdminUser = {
   id: string;
@@ -97,12 +98,12 @@ export const getSetting = createServerFn({ method: "GET" })
       .select("value")
       .eq("key", data.key)
       .maybeSingle();
-    return (row?.value ?? null) as Record<string, unknown> | null;
+    return (row?.value ?? null) as Json;
   });
 
 export const saveSetting = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
-    z.object({ key: z.string().max(60), value: z.unknown() }).parse(d),
+    z.object({ key: z.string().max(60), value: z.any() }).parse(d),
   )
   .handler(async ({ data }) => {
     await guard();
