@@ -97,7 +97,7 @@ export const getSetting = createServerFn({ method: "GET" })
       .select("value")
       .eq("key", data.key)
       .maybeSingle();
-    return (row?.value ?? null) as unknown;
+    return (row?.value ?? null) as Record<string, unknown> | null;
   });
 
 export const saveSetting = createServerFn({ method: "POST" })
