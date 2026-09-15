@@ -23,6 +23,7 @@ import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as SuperIndexRouteImport } from './routes/super.index'
 import { Route as SuperDashboardRouteImport } from './routes/super.dashboard'
 import { Route as SuperLoginRouteImport } from './routes/super.login'
+import { Route as SuperServicesRouteImport } from './routes/super.services'
 import { Route as ApiPublicMediaIdRouteImport } from './routes/api/public/media.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -95,6 +96,11 @@ const SuperLoginRoute = SuperLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => SuperRoute,
 } as any)
+const SuperServicesRoute = SuperServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => SuperRoute,
+} as any)
 const ApiPublicMediaIdRoute = ApiPublicMediaIdRouteImport.update({
   id: '/api/public/media/$id',
   path: '/api/public/media/$id',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/services/$slug': typeof ServicesSlugRoute
   '/super/dashboard': typeof SuperDashboardRoute
   '/super/login': typeof SuperLoginRoute
+  '/super/services': typeof SuperServicesRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super/': typeof SuperIndexRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/services/$slug': typeof ServicesSlugRoute
   '/super/dashboard': typeof SuperDashboardRoute
   '/super/login': typeof SuperLoginRoute
+  '/super/services': typeof SuperServicesRoute
   '/blog': typeof BlogIndexRoute
   '/services': typeof ServicesIndexRoute
   '/super': typeof SuperIndexRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/services/$slug': typeof ServicesSlugRoute
   '/super/dashboard': typeof SuperDashboardRoute
   '/super/login': typeof SuperLoginRoute
+  '/super/services': typeof SuperServicesRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super/': typeof SuperIndexRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/super/dashboard'
     | '/super/login'
+    | '/super/services'
     | '/blog/'
     | '/services/'
     | '/super/'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/super/dashboard'
     | '/super/login'
+    | '/super/services'
     | '/blog'
     | '/services'
     | '/super'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/super/dashboard'
     | '/super/login'
+    | '/super/services'
     | '/blog/'
     | '/services/'
     | '/super/'
@@ -320,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperLoginRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/services': {
+      id: '/super/services'
+      path: '/services'
+      fullPath: '/super/services'
+      preLoaderRoute: typeof SuperServicesRouteImport
+      parentRoute: typeof SuperRoute
+    }
     '/api/public/media/$id': {
       id: '/api/public/media/$id'
       path: '/api/public/media/$id'
@@ -333,12 +352,14 @@ declare module '@tanstack/react-router' {
 interface SuperRouteChildren {
   SuperDashboardRoute: typeof SuperDashboardRoute
   SuperLoginRoute: typeof SuperLoginRoute
+  SuperServicesRoute: typeof SuperServicesRoute
   SuperIndexRoute: typeof SuperIndexRoute
 }
 
 const SuperRouteChildren: SuperRouteChildren = {
   SuperDashboardRoute: SuperDashboardRoute,
   SuperLoginRoute: SuperLoginRoute,
+  SuperServicesRoute: SuperServicesRoute,
   SuperIndexRoute: SuperIndexRoute,
 }
 
