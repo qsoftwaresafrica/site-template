@@ -24,7 +24,7 @@ async function client() {
 /* ---------------------------------------------------------------- auth --- */
 
 export const adminLogin = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ email: z.string().email(), password: z.string().min(1).max(200) }).parse(d),
   )
   .handler(async ({ data }) => {
@@ -55,7 +55,7 @@ function toHex(base64: string) {
 }
 
 export const uploadMedia = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         filename: z.string().max(200),
@@ -90,7 +90,7 @@ export const uploadMedia = createServerFn({ method: "POST" })
 /* ------------------------------------------------------------ settings --- */
 
 export const getSetting = createServerFn({ method: "GET" })
-  .inputValidator((d: { key: string }) => z.object({ key: z.string().max(60) }).parse(d))
+  .validator((d: { key: string }) => z.object({ key: z.string().max(60) }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     const { data: row } = await (await client())
@@ -102,7 +102,7 @@ export const getSetting = createServerFn({ method: "GET" })
   });
 
 export const saveSetting = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ key: z.string().max(60), value: z.any() }).parse(d),
   )
   .handler(async ({ data }) => {
@@ -139,7 +139,7 @@ export const adminListServices = createServerFn({ method: "GET" }).handler(async
 });
 
 export const saveService = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => serviceSchema.parse(d))
+  .validator((d: unknown) => serviceSchema.parse(d))
   .handler(async ({ data }) => {
     await guard();
     const c = await client();
@@ -152,7 +152,7 @@ export const saveService = createServerFn({ method: "POST" })
   });
 
 export const deleteService = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     await (await client()).from("services").delete().eq("id", data.id);
@@ -175,7 +175,7 @@ const articleSchema = z.object({
 });
 
 export const adminListArticles = createServerFn({ method: "GET" })
-  .inputValidator((d: { q?: string; status?: string } | undefined) =>
+  .validator((d: { q?: string; status?: string } | undefined) =>
     z
       .object({ q: z.string().max(120).optional(), status: z.string().max(20).optional() })
       .parse(d ?? {}),
@@ -197,7 +197,7 @@ export const adminListArticles = createServerFn({ method: "GET" })
   });
 
 export const adminGetArticle = createServerFn({ method: "GET" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     const { data: row } = await (await client())
@@ -221,7 +221,7 @@ export const createArticle = createServerFn({ method: "POST" }).handler(async ()
 });
 
 export const saveArticle = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => articleSchema.parse(d))
+  .validator((d: unknown) => articleSchema.parse(d))
   .handler(async ({ data }) => {
     await guard();
     const c = await client();
@@ -242,7 +242,7 @@ export const saveArticle = createServerFn({ method: "POST" })
   });
 
 export const deleteArticle = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     await (await client()).from("articles").delete().eq("id", data.id);
@@ -262,7 +262,7 @@ export const adminListGallery = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const savePhoto = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         id: z.string().uuid().optional(),
@@ -291,7 +291,7 @@ export const savePhoto = createServerFn({ method: "POST" })
   });
 
 export const deletePhoto = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     await (await client()).from("gallery_photos").delete().eq("id", data.id);
@@ -310,7 +310,7 @@ export const adminListTeam = createServerFn({ method: "GET" }).handler(async () 
 });
 
 export const saveTeamMember = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         id: z.string().uuid().optional(),
@@ -334,7 +334,7 @@ export const saveTeamMember = createServerFn({ method: "POST" })
   });
 
 export const deleteTeamMember = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     await (await client()).from("team_members").delete().eq("id", data.id);
@@ -353,7 +353,7 @@ export const adminListUsers = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const saveUser = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         id: z.string().uuid().optional(),
@@ -396,7 +396,7 @@ export const saveUser = createServerFn({ method: "POST" })
   });
 
 export const deleteUser = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     const me = await guard();
     if (me.id === data.id) throw new Error("You cannot delete your own account.");
@@ -416,7 +416,7 @@ export const adminListSocials = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const saveSocials = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         rows: z.array(
@@ -444,7 +444,7 @@ export const saveSocials = createServerFn({ method: "POST" })
   });
 
 export const deleteSocial = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     await (await client()).from("socials").delete().eq("id", data.id);
@@ -464,7 +464,7 @@ export const adminListInquiries = createServerFn({ method: "GET" }).handler(asyn
 });
 
 export const setInquiryHandled = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ id: z.string().uuid(), handled: z.boolean() }).parse(d),
   )
   .handler(async ({ data }) => {
@@ -474,7 +474,7 @@ export const setInquiryHandled = createServerFn({ method: "POST" })
   });
 
 export const deleteInquiry = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await guard();
     await (await client()).from("inquiries").delete().eq("id", data.id);

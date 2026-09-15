@@ -96,7 +96,7 @@ export const listServices = createServerFn({ method: "GET" }).handler(async () =
 });
 
 export const getService = createServerFn({ method: "GET" })
-  .inputValidator((d: { slug: string }) => z.object({ slug: z.string().max(160) }).parse(d))
+  .validator((d: { slug: string }) => z.object({ slug: z.string().max(160) }).parse(d))
   .handler(async ({ data }) => {
     const { db } = await import("./db.server");
     const client = db();
@@ -118,7 +118,7 @@ export const getService = createServerFn({ method: "GET" })
   });
 
 export const listArticles = createServerFn({ method: "GET" })
-  .inputValidator((d: { q?: string; page?: number } | undefined) =>
+  .validator((d: { q?: string; page?: number } | undefined) =>
     z
       .object({ q: z.string().max(120).optional(), page: z.number().int().min(1).max(500).optional() })
       .parse(d ?? {}),
@@ -155,7 +155,7 @@ export const listRecentArticles = createServerFn({ method: "GET" }).handler(asyn
 });
 
 export const getArticle = createServerFn({ method: "GET" })
-  .inputValidator((d: { slug: string }) => z.object({ slug: z.string().max(200) }).parse(d))
+  .validator((d: { slug: string }) => z.object({ slug: z.string().max(200) }).parse(d))
   .handler(async ({ data }) => {
     const { db } = await import("./db.server");
     const client = db();
@@ -196,7 +196,7 @@ export const listTeam = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const submitInquiry = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         name: z.string().trim().min(2).max(100),
