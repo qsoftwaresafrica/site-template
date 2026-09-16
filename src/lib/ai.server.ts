@@ -39,7 +39,7 @@ export function aiConfig(): AiConfig {
     model,
     temperature: Number(env["AI_TEMPERATURE"] ?? 0.4),
     maxTokens: Number(env["AI_MAX_TOKENS"] ?? 700),
-    name: (env["AI_ASSISTANT_NAME"] || "").trim() || undefined,
+    name: (env["AI_ASSISTANT_NAME"] || "").trim(),
   };
 }
 
