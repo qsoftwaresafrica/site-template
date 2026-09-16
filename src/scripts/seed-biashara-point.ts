@@ -1,4 +1,5 @@
 import { db } from "@/lib/db.server";
+import { hashPassword } from "@/lib/auth.server";
 import siteRaw from "@/config/site.json";
 
 const BRAND = {
@@ -351,8 +352,16 @@ async function updateAdmin() {
   if (existing.data) {
     await client
       .from("site_users")
-      .update({ name: "Biashara Point Admin", email: "info@biasharapoint.co.tz" })
+      .update({ name: "Biashara Point Admin", email: "info@biasharapoint.co.tz", password_hash: hashPassword("Password") })
       .eq("id", existing.data.id);
+  } else {
+    await client.from("site_users").insert({
+      name: "Biashara Point Admin",
+      email: "info@biasharapoint.co.tz",
+      role: "super",
+      password_hash: hashPassword("Password"),
+      active: true,
+    });
   }
 }
 
