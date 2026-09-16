@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Save } from "lucide-react";
 import { getSetting, saveSetting } from "@/lib/admin.functions";
-import { Field, inputClass, PageHeading, Panel, run } from "@/components/admin/ui";
+import { Field, inputClass, PageHeading, Panel, useAction } from "@/components/admin/ui";
 import type { AboutSettings } from "@/lib/public.functions";
 
 const fallback: AboutSettings = {
@@ -21,6 +21,7 @@ export const Route = createFileRoute("/super/about")({
 function AboutAdmin() {
   const loaded = Route.useLoaderData();
   const [about, setAbout] = useState<AboutSettings>({ ...fallback, ...(loaded ?? {}) });
+  const { loading, execute } = useAction();
 
   return (
     <>
@@ -29,8 +30,9 @@ function AboutAdmin() {
         description="Manage the About Us section on the home page."
         action={
           <button
-            onClick={() => void run(() => saveSetting({ data: { key: "about", value: about } }), "About section saved")}
+            onClick={() => void execute("save", () => saveSetting({ data: { key: "about", value: about } }), "About section saved")}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            disabled={loading === "save"}
           >
             <Save className="h-4 w-4" /> Save changes
           </button>

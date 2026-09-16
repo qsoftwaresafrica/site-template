@@ -52,7 +52,7 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
           <div className="container-page flex h-9 items-center justify-between gap-4 text-xs lg:max-w-none lg:justify-end">
           <p className="truncate opacity-80 lg:hidden">{site.brand.motto}</p>
           <div className="flex shrink-0 items-center gap-3">
-            {data.socials.map((s) => (
+            {data.socials.filter((s) => s.url).map((s) => (
               <a
                 key={s.platform}
                 href={s.url}
@@ -83,8 +83,8 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
               className="h-11 w-11 shrink-0 object-contain lg:h-20 lg:w-20 lg:-mt-6 lg:-ml-12"
             />
             <span className="min-w-0 lg:-mt-6">
-              <span className="block truncate font-display text-lg font-extrabold uppercase tracking-tight sm:text-xl lg:text-[1.75rem]">
-                {site.brand.name}
+              <span className="block truncate font-brand text-lg font-extrabold uppercase tracking-tight sm:text-xl lg:text-[1.75rem]">
+                {site.brand.shortName || site.brand.name}
               </span>
               <span className="block truncate text-xs text-muted-foreground lg:text-base">
                 {site.brand.tagline}

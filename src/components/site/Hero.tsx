@@ -26,21 +26,27 @@ export function Hero({ hero }: { hero: HeroSettings }) {
               key={s.url}
               aria-hidden={i !== index}
               className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
-                i === index ? "opacity-100 animate-slide-bg" : "opacity-0"
+                i === index ? "opacity-100" : "opacity-0" /* removed animate-slide-bg so slides start clear */
               }`}
               style={{ backgroundImage: `url(${s.url})` }}
             />
           ))}
+          {/* overlay commented out — slides now stay clear for their full duration
           <div
             className="absolute inset-0 bg-ink"
             style={{ opacity: hero.overlay ?? 0.55 }}
           />
+          */}
         </>
       ) : (
         <div className="absolute inset-0 bg-primary" />
       )}
 
-      <div className="container-page relative flex min-h-[68vh] flex-col justify-center py-24 md:min-h-[76vh]">
+      <div
+        className="hero-bg absolute inset-y-0 left-0 w-full bg-primary/80 lg:w-2/3 lg:hover:w-full"
+      />
+
+      <div className="container-page relative flex h-[540px] flex-col justify-center py-24 md:h-[620px]">
         <div className="max-w-2xl">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-ink-foreground backdrop-blur">
             Business & Investment Consultancy

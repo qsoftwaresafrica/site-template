@@ -14,8 +14,11 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { site, themeCss, googleFontsHref } from "@/lib/site";
 import { getBootstrap } from "@/lib/public.functions";
+import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/seo";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteLoader } from "@/components/site/SiteLoader";
+import { BackToTop } from "@/components/site/BackToTop";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -90,6 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:locale", content: site.seo.locale },
       { name: "twitter:card", content: "summary_large_image" },
+      ...(site.seo.socials?.twitter ? [
+        { name: "twitter:site", content: site.seo.socials.twitter },
+        { name: "twitter:creator", content: site.seo.socials.twitter },
+      ] : []),
       { name: "geo.region", content: `${site.seo.geo.country}-${site.seo.geo.region}` },
       { name: "geo.placename", content: site.seo.geo.locality },
       {
@@ -144,33 +151,25 @@ function RootComponent() {
     );
   }
 
-  const organization = {
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    name: site.brand.legalName,
-    alternateName: site.brand.name,
-    url: data.origin,
-    logo: `${data.origin}${site.brand.logo}`,
-    image: `${data.origin}${site.brand.logo}`,
-    description: site.seo.defaultDescription,
-    slogan: site.brand.motto,
-    telephone: data.contacts?.phones ?? [],
-    email: data.contacts?.emails?.[0],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: data.contacts?.addressLines?.join(", "),
-      addressLocality: site.seo.geo.locality,
-      addressCountry: site.seo.geo.country,
-    },
-    areaServed: site.seo.geo.locality,
-    sameAs: data.socials.map((s) => s.url),
-  };
+  const organization = buildOrganizationSchema(data.origin, data.contacts ? {
+    phones: data.contacts.phones,
+    emails: data.contacts.emails,
+    addressLines: data.contacts.addressLines,
+    socials: data.socials
+  } : undefined);
+  
+  const website = buildWebSiteSchema(data.origin);
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SiteLoader />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
       />
       <div className="flex min-h-screen flex-col">
         <SiteHeader data={data} />
@@ -180,6 +179,7 @@ function RootComponent() {
         </main>
         <SiteFooter data={data} />
       </div>
+      <BackToTop />
       <Toaster position="top-right" richColors />
     </QueryClientProvider>
   );

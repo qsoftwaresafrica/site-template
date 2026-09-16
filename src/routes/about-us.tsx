@@ -47,7 +47,7 @@ function AboutPage() {
             ))}
           </Reveal>
           <Reveal delay={120}>
-            <div className="surface-card border-l-4 border-l-primary p-7">
+            <div className="card border-l-2 border-l-primary p-7">
               <p className="font-display text-lg font-bold leading-snug">
                 {boot.about?.highlight}
               </p>

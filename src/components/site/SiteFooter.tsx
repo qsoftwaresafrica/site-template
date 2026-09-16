@@ -71,7 +71,7 @@ export function SiteFooter({ data }: { data: Bootstrap }) {
 
             {data.socials.length ? (
               <div className="mt-5 flex gap-2">
-                {data.socials.map((s) => (
+                {data.socials.filter((s) => s.url).map((s) => (
                   <a
                     key={s.platform}
                     href={s.url}
@@ -101,7 +101,7 @@ export function SiteFooter({ data }: { data: Bootstrap }) {
                 href={site.partner.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-primary link-underline"
+                className="font-bold text-yellow-500 link-underline"
               >
                 {site.partner.label}
               </a>

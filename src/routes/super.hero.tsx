@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { getSetting, saveSetting } from "@/lib/admin.functions";
-import { Field, inputClass, PageHeading, Panel, ImagePicker, run } from "@/components/admin/ui";
+import { Field, inputClass, PageHeading, Panel, ImagePicker, useAction } from "@/components/admin/ui";
 import type { HeroSettings, HeroSlide } from "@/lib/public.functions";
 import { mediaUrl } from "@/components/site/Icon";
 
@@ -23,6 +23,7 @@ export const Route = createFileRoute("/super/hero")({
 function HeroAdmin() {
   const loaded = Route.useLoaderData();
   const [hero, setHero] = useState<HeroSettings>({ ...fallback, ...(loaded ?? {}) });
+  const { loading, execute } = useAction();
 
   const patchSlide = (index: number, patch: Partial<HeroSlide>) =>
     setHero({
@@ -37,10 +38,11 @@ function HeroAdmin() {
         description="The big banner at the top of the home page."
         action={
           <button
-            onClick={() => void run(() => saveSetting({ data: { key: "hero", value: hero } }), "Hero saved")}
+            onClick={() => void execute("save", () => saveSetting({ data: { key: "hero", value: hero } }), "Hero saved")}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            disabled={loading === "save"}
           >
-            <Save className="h-4 w-4" /> Save changes
+            {loading === "save" ? "Saving..." : <><Save className="h-4 w-4" /> Save changes</>}
           </button>
         }
       />

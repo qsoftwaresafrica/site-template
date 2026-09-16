@@ -13,10 +13,11 @@ import {
   PageHeading,
   Panel,
   ImagePicker,
-  run,
+  useAction,
 } from "@/components/admin/ui";
 import { slugify } from "@/lib/admin-client";
 import { markdownToHtml } from "@/lib/markdown";
+import { mediaUrl } from "@/components/site/Icon";
 
 export const Route = createFileRoute("/super/blog")({
   loader: () => adminListArticles(),
@@ -109,12 +110,14 @@ function insertMarkdown(
 }
 
 function BlogAdmin() {
-  const rows = Route.useLoaderData();
+  const data = Route.useLoaderData() as { rows: any[]; total: number; page: number; pageSize: number; totalPages: number };
+  const rows = data.rows;
   const router = useRouter();
   const [draft, setDraft] = useState<Draft | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
   const bodyRef = useRef<HTMLTextAreaElement | null>(null);
+  const { loading, execute } = useAction();
 
   const filtered = useMemo(() => {
     let data = rows;
@@ -137,7 +140,7 @@ function BlogAdmin() {
       slug: draft.slug || slugify(draft.title),
       tags: draft.tags.map((t) => t.trim()).filter(Boolean),
     };
-    const ok = await run(() => saveArticle({ data: payload }), "Article saved");
+    const ok = await execute("save", () => saveArticle({ data: payload }), "Article saved");
     if (ok) {
       setDraft(null);
       await router.invalidate();
@@ -164,10 +167,9 @@ function BlogAdmin() {
 
   async function remove(id: string) {
     if (!confirm("Delete this article permanently?")) return;
-    if (await run(() => deleteArticle({ data: { id } }), "Article deleted")) {
-      await router.invalidate();
-      if (draft?.id === id) setDraft(null);
-    }
+    await execute(`delete-${id}`, () => deleteArticle({ data: { id } }), "Article deleted");
+    await router.invalidate();
+    if (draft?.id === id) setDraft(null);
   }
 
   return (
@@ -177,10 +179,11 @@ function BlogAdmin() {
         description="Manage articles and blog posts shown on the website."
         action={
           <button
-            onClick={() => void createNew()}
+            onClick={async () => await execute("create", createNew, "Article created")}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            disabled={loading === "create"}
           >
-            <Plus className="h-4 w-4" /> New article
+            {loading === "create" ? "Creating..." : <><Plus className="h-4 w-4" /> New article</>}
           </button>
         }
       />
@@ -198,10 +201,11 @@ function BlogAdmin() {
                   <X className="h-4 w-4" /> Cancel
                 </button>
                 <button
-                  onClick={() => void save()}
+                  onClick={() => void execute("save", save, "Article saved")}
                   className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
+                  disabled={loading === "save"}
                 >
-                  <Save className="h-4 w-4" /> Save
+                  {loading === "save" ? "Saving..." : <><Save className="h-4 w-4" /> Save</>}
                 </button>
               </div>
             }
@@ -305,11 +309,28 @@ function BlogAdmin() {
                   />
                 </Field>
               </div>
-              <ImagePicker
-                mediaId={draft.cover_id}
-                imageUrl={draft.cover_url}
-                onChange={(id) => setDraft({ ...draft, cover_id: id })}
-              />
+              <div className="md:col-span-2">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <ImagePicker
+                    imageUrl={draft.cover_url}
+                    label="Cover picture"
+                    onChange={(id) =>
+                      setDraft({
+                        ...draft,
+                        cover_id: id,
+                        cover_url: id ? (mediaUrl(id) ?? "") : "",
+                      })
+                    }
+                  />
+                  <Field label="Picture link" hint="Or paste an online image address.">
+                    <input
+                      className={inputClass}
+                      value={draft.cover_url ?? ""}
+                      onChange={(e) => setDraft({ ...draft, cover_url: e.target.value, cover_id: null })}
+                    />
+                  </Field>
+                </div>
+              </div>
             </div>
           </Panel>
         </div>
@@ -345,7 +366,7 @@ function BlogAdmin() {
             className="rounded-xl border border-border bg-card p-5 shadow-sm"
           >
             <div className="flex items-start justify-between gap-3">
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="font-display text-base font-bold">{row.title}</h3>
                   <span
@@ -358,14 +379,14 @@ function BlogAdmin() {
                     {row.status}
                   </span>
                 </div>
-                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                <p className="mt-1 line-clamp-2 break-words text-sm text-muted-foreground">
                   {row.excerpt || "No excerpt"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   By {row.author || "Unknown"} • {row.tags?.join(", ") || "No tags"}
                 </p>
                 {row.body ? (
-                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                  <p className="mt-2 line-clamp-3 break-words text-sm text-muted-foreground">
                     {row.body.replace(/[#*_>`]/g, "").slice(0, 180)}
                     {row.body.length > 180 ? "…" : ""}
                   </p>
@@ -392,10 +413,11 @@ function BlogAdmin() {
                   Edit
                 </button>
                 <button
-                  onClick={() => void remove(row.id)}
+                  onClick={() => execute(`delete-${row.id}`, () => remove(row.id), "Article deleted")}
                   className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
+                  disabled={loading === `delete-${row.id}`}
                 >
-                  <Trash2 className="h-4 w-4" /> Delete
+                  {loading === `delete-${row.id}` ? "Deleting..." : <><Trash2 className="h-4 w-4" /> Delete</>}
                 </button>
               </div>
             </div>

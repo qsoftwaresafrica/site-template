@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Plus, Trash2, Save, X, ZoomIn } from "lucide-react";
 import {
@@ -12,9 +13,9 @@ import {
   PageHeading,
   Panel,
   ImagePicker,
-  run,
+  useAction,
 } from "@/components/admin/ui";
-import { imageOf } from "@/components/site/Icon";
+import { imageOf, mediaUrl } from "@/components/site/Icon";
 
 export const Route = createFileRoute("/super/gallery")({
   loader: () => adminListGallery(),
@@ -43,12 +44,14 @@ const empty: Draft = {
 };
 
 function GalleryAdmin() {
-  const rows = Route.useLoaderData();
+  const data = Route.useLoaderData() as { rows: any[]; total: number; page: number; pageSize: number; totalPages: number };
+  const rows = data.rows;
   const router = useRouter();
   const [draft, setDraft] = useState<Draft | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { loading, execute } = useAction();
 
   const categories = useMemo(() => {
     const set = new Set(rows.map((r: any) => r.category).filter(Boolean));
@@ -71,23 +74,20 @@ function GalleryAdmin() {
 
   async function save() {
     if (!draft) return;
-    const ok = await run(() => savePhoto({ data: draft }), "Photo saved");
-    if (ok) {
-      setDraft(null);
-      await router.invalidate();
-    }
+    await savePhoto({ data: draft });
+    setDraft(null);
+    await router.invalidate();
   }
 
-  async function createNew() {
+  function createNew() {
     setDraft({ ...empty, posted_on: new Date().toISOString().slice(0, 10) });
   }
 
   async function remove(id: string) {
     if (!confirm("Delete this photo permanently?")) return;
-    if (await run(() => deletePhoto({ data: { id } }), "Photo deleted")) {
-      await router.invalidate();
-      if (draft?.id === id) setDraft(null);
-    }
+    await deletePhoto({ data: { id } });
+    await router.invalidate();
+    if (draft?.id === id) setDraft(null);
   }
 
   function startEdit(row: any) {
@@ -131,10 +131,11 @@ function GalleryAdmin() {
                   <X className="h-4 w-4" /> Cancel
                 </button>
                 <button
-                  onClick={() => void save()}
+                  onClick={() => void execute("save", save, "Photo saved")}
                   className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
+                  disabled={loading === "save"}
                 >
-                  <Save className="h-4 w-4" /> Save
+                  {loading === "save" ? "Saving..." : <><Save className="h-4 w-4" /> Save</>}
                 </button>
               </div>
             }
@@ -144,9 +145,15 @@ function GalleryAdmin() {
                 <ImagePicker
                   mediaId={draft.media_id}
                   imageUrl={draft.image_url}
-                  onChange={(id) => setDraft({ ...draft, media_id: id })}
+                  onChange={(id) =>
+                    setDraft((prev) => ({
+                      ...prev,
+                      media_id: id,
+                      image_url: id ? mediaUrl(id) ?? prev.image_url : null,
+                    }))
+                  }
                   onDimensions={(width, height) =>
-                    setDraft({ ...draft, width, height })
+                    setDraft((prev) => ({ ...prev, width, height }))
                   }
                 />
               </div>
@@ -154,21 +161,21 @@ function GalleryAdmin() {
                 <input
                   className={inputClass}
                   value={draft.image_url ?? ""}
-                  onChange={(e) => setDraft({ ...draft, image_url: e.target.value || null })}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, image_url: e.target.value || null }))}
                 />
               </Field>
               <Field label="Category" hint="Used to group photos.">
                 <input
                   className={inputClass}
                   value={draft.category}
-                  onChange={(e) => setDraft({ ...draft, category: e.target.value })}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, category: e.target.value }))}
                 />
               </Field>
               <Field label="Caption">
                 <input
                   className={inputClass}
                   value={draft.caption}
-                  onChange={(e) => setDraft({ ...draft, caption: e.target.value })}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, caption: e.target.value }))}
                 />
               </Field>
               <Field label="Posted on">
@@ -176,7 +183,7 @@ function GalleryAdmin() {
                   type="date"
                   className={inputClass}
                   value={draft.posted_on}
-                  onChange={(e) => setDraft({ ...draft, posted_on: e.target.value })}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, posted_on: e.target.value }))}
                 />
               </Field>
               <Field label="Width (px)">
@@ -185,7 +192,7 @@ function GalleryAdmin() {
                   className={inputClass}
                   value={draft.width ?? ""}
                   onChange={(e) =>
-                    setDraft({ ...draft, width: e.target.value ? Number(e.target.value) : null })
+                    setDraft((prev) => ({ ...prev, width: e.target.value ? Number(e.target.value) : null }))
                   }
                 />
               </Field>
@@ -195,7 +202,7 @@ function GalleryAdmin() {
                   className={inputClass}
                   value={draft.height ?? ""}
                   onChange={(e) =>
-                    setDraft({ ...draft, height: e.target.value ? Number(e.target.value) : null })
+                    setDraft((prev) => ({ ...prev, height: e.target.value ? Number(e.target.value) : null }))
                   }
                 />
               </Field>
@@ -255,7 +262,7 @@ function GalleryAdmin() {
                   </div>
                 )}
                 {src ? (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors hover:bg-black/20">
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#131313]/0 transition-colors hover:bg-[#131313]/20">
                     <ZoomIn className="h-8 w-8 text-white opacity-0 transition-opacity hover:opacity-100" />
                   </div>
                 ) : null}
@@ -275,12 +282,13 @@ function GalleryAdmin() {
                   >
                     Edit
                   </button>
-                  <button
-                    onClick={() => void remove(row.id)}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                   <button
+                     onClick={() => void remove(row.id)}
+                     className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
+                     disabled={loading === `delete-${row.id}`}
+                   >
+                     {loading === `delete-${row.id}` ? "Deleting..." : <><Trash2 className="h-4 w-4" /></>}
+                   </button>
                 </div>
               </div>
             </div>
@@ -293,26 +301,29 @@ function GalleryAdmin() {
         ) : null}
       </div>
 
-      {previewUrl ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setPreviewUrl(null)}
-        >
-          <div className="relative max-h-[90vh] max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={previewUrl}
-              alt="Preview"
-              className="max-h-[90vh] max-w-full rounded-lg object-contain"
-            />
-            <button
+      {previewUrl && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-[#131313]/80 p-4"
               onClick={() => setPreviewUrl(null)}
-              className="absolute -right-3 -top-3 rounded-full bg-white p-1 text-black shadow-lg hover:bg-gray-100"
             >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      ) : null}
+              <div className="relative max-h-[90vh] max-w-5xl" onClick={(e) => e.stopPropagation()}>
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="max-h-[90vh] max-w-full rounded-lg object-contain"
+                />
+                <button
+                  onClick={() => setPreviewUrl(null)}
+                  className="absolute -right-3 -top-3 rounded-full bg-white p-1 text-black shadow-lg hover:bg-gray-100"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }

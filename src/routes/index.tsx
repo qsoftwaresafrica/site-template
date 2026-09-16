@@ -166,7 +166,7 @@ function HomePage() {
             <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm">
               {["Free first consultation", "Transparent pricing", "Nationwide service"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-primary" /> {t}
+                  <CheckCircle2 size={16} className="text-success" /> {t}
                 </li>
               ))}
             </ul>

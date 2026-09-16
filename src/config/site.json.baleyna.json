@@ -1,34 +1,32 @@
 {
   "$comment": "Single source of truth for branding. Swap this file + /public/logo.png and the whole site becomes another company's.",
   "brand": {
-    "name": "Biashara Point Consultancy",
-    "legalName": "Biashara Point Consultancy",
-    "shortName": "Biashara Point",
-    "tagline": "Business Consultancy",
+    "name": "Baleyna",
+    "legalName": "Baleyna Secretarial Company Ltd",
+    "shortName": "Baleyna Secretarial",
+    "tagline": "Secretarial",
     "motto": "Business and investment consultancy, start to finish.",
     "logo": "/logo.png",
     "logoDark": "/logo.png",
     "favicon": "/favicon.png",
     "bannerImage": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80",
-    "foundedYear": 2020
+    "foundedYear": 2016
   },
   "seo": {
-    "titleTemplate": "%s | Biashara Point Consultancy",
-    "defaultTitle": "Biashara Point Consultancy | Business Registration & Consultancy Tanzania",
-    "defaultDescription": "Company registration, business licences, work permits, trademarks and bankable business plans for local and foreign investors in Tanzania.",
+    "titleTemplate": "%s | Baleyna Secretarial",
+    "defaultTitle": "Baleyna Secretarial | Company Registration & Business Consultancy",
+    "defaultDescription": "Company registration, business licences, permits and bankable business plans for local and foreign investors in Tanzania.",
     "keywords": [
-      "company registration Tanzania",
+      "company registration",
       "business licences",
       "work permits",
-      "trademark registration",
       "business plans",
-      "Bureau de Change",
-      "Tanzania business consultancy"
+      "Tanzania company formation"
     ],
     "locale": "en_US",
     "twitterHandle": "",
     "organizationType": "ProfessionalService",
-    "themeColor": "#0f172a",
+    "themeColor": "#1c1a17",
     "socials": {
       "twitter": ""
     },
@@ -36,79 +34,30 @@
       "country": "TZ",
       "region": "Dar es Salaam",
       "locality": "Dar es Salaam",
-      "street": "Makumbusho Complex, Block B, 2nd Floor, Room B2ND-08",
-      "postalCode": "14110",
-      "latitude": -6.7924,
-      "longitude": 39.2083,
+      "street": "KKKT Ground, Kurasini",
+      "postalCode": "5614",
+      "latitude": -6.8359,
+      "longitude": 39.2803,
       "openingHours": [
-        "Mo-Fr 08:00-23:00",
-        "Sa 08:00-14:00"
+        "Mo-Fr 08:00-17:00",
+        "Sa 09:00-13:00"
       ],
       "priceRange": "$$"
     }
   },
   "theme": {
-    "active": "navy",
+    "active": "sand",
     "font": {
-      "heading": "Inter",
+      "heading": "Montserrat",
       "body": "Figtree",
       "mono": "JetBrains Mono"
     },
     "radius": "0.625rem",
     "presets": {
-      "navy": {
-        "label": "Navy Professional",
+      "sand": {
+        "label": "Sand & Ink",
         "light": {
-          "background": "oklch(0.995 0.003 250)",
-          "foreground": "oklch(0.21 0.015 260)",
-          "card": "oklch(1 0 0)",
-          "card-foreground": "oklch(0.21 0.015 260)",
-          "popover": "oklch(1 0 0)",
-          "popover-foreground": "oklch(0.21 0.015 260)",
-          "primary": "oklch(0.32 0.08 260)",
-          "primary-foreground": "oklch(0.98 0.005 250)",
-          "secondary": "oklch(0.955 0.012 250)",
-          "secondary-foreground": "oklch(0.27 0.018 258)",
-          "muted": "oklch(0.962 0.01 250)",
-          "muted-foreground": "oklch(0.52 0.022 255)",
-          "accent": "oklch(0.93 0.04 78)",
-          "accent-foreground": "oklch(0.24 0.03 62)",
-          "destructive": "oklch(0.58 0.21 27)",
-          "destructive-foreground": "oklch(0.98 0.005 250)",
-          "border": "oklch(0.905 0.012 250)",
-          "input": "oklch(0.905 0.012 250)",
-          "ring": "oklch(0.32 0.08 260)",
-          "ink": "#0f172a",
-          "ink-foreground": "oklch(0.97 0.005 250)"
-        },
-        "dark": {
-          "background": "oklch(0.17 0.01 260)",
-          "foreground": "oklch(0.96 0.006 250)",
-          "card": "oklch(0.215 0.012 262)",
-          "card-foreground": "oklch(0.96 0.006 250)",
-          "popover": "oklch(0.215 0.012 262)",
-          "popover-foreground": "oklch(0.96 0.006 250)",
-          "primary": "oklch(0.42 0.1 262)",
-          "primary-foreground": "oklch(0.17 0.01 260)",
-          "secondary": "oklch(0.27 0.014 262)",
-          "secondary-foreground": "oklch(0.96 0.006 250)",
-          "muted": "oklch(0.27 0.014 262)",
-          "muted-foreground": "oklch(0.72 0.016 78)",
-          "accent": "oklch(0.32 0.04 78)",
-          "accent-foreground": "oklch(0.96 0.006 250)",
-          "destructive": "oklch(0.66 0.19 25)",
-          "destructive-foreground": "oklch(0.98 0.005 250)",
-          "border": "oklch(1 0 0 / 12%)",
-          "input": "oklch(1 0 0 / 16%)",
-          "ring": "oklch(0.42 0.1 262)",
-          "ink": "#0f172a",
-          "ink-foreground": "oklch(0.97 0.005 250)"
-        }
-      },
-      "gold": {
-        "label": "Gold Executive",
-        "light": {
-          "background": "oklch(0.995 0.003 85)",
+          "background": "oklch(0.995 0.003 90)",
           "foreground": "oklch(0.21 0.015 60)",
           "card": "oklch(1 0 0)",
           "card-foreground": "oklch(0.21 0.015 60)",
@@ -127,7 +76,7 @@
           "border": "oklch(0.91 0.012 82)",
           "input": "oklch(0.91 0.012 82)",
           "ring": "oklch(0.68 0.058 72)",
-          "ink": "#1c1a17",
+          "ink": "#131313",
           "ink-foreground": "oklch(0.97 0.005 90)"
         },
         "dark": {
@@ -150,7 +99,7 @@
           "border": "oklch(1 0 0 / 12%)",
           "input": "oklch(1 0 0 / 16%)",
           "ring": "oklch(0.74 0.062 74)",
-          "ink": "#1c1a17",
+          "ink": "#131313",
           "ink-foreground": "oklch(0.97 0.005 90)"
         }
       },
@@ -266,15 +215,14 @@
     "quickLinks": [
       { "label": "Business Registration and Licensing Agency (BRELA)", "href": "https://www.brela.go.tz" },
       { "label": "Tanzania Revenue Authority (TRA)", "href": "https://www.tra.go.tz" },
-      { "label": "Tanzania Investment Centre (TIC)", "href": "https://www.tic.go.tz" },
-      { "label": "Bank of Tanzania (BoT)", "href": "https://www.bot.go.tz" }
+      { "label": "Tanzania Investment Centre (TIC)", "href": "https://www.tic.go.tz" }
     ]
   },
   "partner": {
     "enabled": true,
-    "prefix": "Partnered & Website by",
+    "prefix": "Official Partner of",
     "label": "QSA",
-    "href": "https://www.qsoftwares.co.tz"
+    "href": "https://qsotwares.co.tz/partners"
   },
   "features": {
     "blog": true,
@@ -287,5 +235,5 @@
     "galleryMaxPhotos": 85,
     "blogPageSize": 6
   },
-  "copyright": "Biashara Point Consultancy"
+  "copyright": "Baleyna Secretarial Company Ltd"
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Plus, Trash2, Save, X } from "lucide-react";
 import { adminListServices, saveService, deleteService } from "@/lib/admin.functions";
-import { Field, inputClass, PageHeading, Panel, ImagePicker, run } from "@/components/admin/ui";
+import { Field, inputClass, PageHeading, Panel, ImagePicker, useAction } from "@/components/admin/ui";
 import { slugify } from "@/lib/admin-client";
 import { Icon } from "@/components/site/Icon";
 
@@ -40,11 +40,12 @@ function ServicesAdmin() {
   const rows = Route.useLoaderData();
   const router = useRouter();
   const [draft, setDraft] = useState<Draft | null>(null);
+  const { loading, execute } = useAction();
 
   async function save() {
     if (!draft) return;
     const payload = { ...draft, slug: draft.slug || slugify(draft.title) };
-    const ok = await run(() => saveService({ data: payload }), "Service saved");
+    const ok = await execute("save", () => saveService({ data: payload }), "Service saved");
     if (ok) {
       setDraft(null);
       await router.invalidate();
@@ -53,7 +54,8 @@ function ServicesAdmin() {
 
   async function remove(id: string) {
     if (!confirm("Delete this service permanently?")) return;
-    if (await run(() => deleteService({ data: { id } }), "Service deleted")) await router.invalidate();
+    await execute(`delete-${id}`, () => deleteService({ data: { id } }), "Service deleted");
+    await router.invalidate();
   }
 
   return (
@@ -84,10 +86,11 @@ function ServicesAdmin() {
                   <X className="h-4 w-4" /> Cancel
                 </button>
                 <button
-                  onClick={() => void save()}
+                  onClick={() => void execute("save", save, "Service saved")}
                   className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
+                  disabled={loading === "save"}
                 >
-                  <Save className="h-4 w-4" /> Save
+                  {loading === "save" ? "Saving..." : <><Save className="h-4 w-4" /> Save</>}
                 </button>
               </div>
             }
@@ -217,12 +220,13 @@ function ServicesAdmin() {
               >
                 Edit
               </button>
-              <button
-                onClick={() => void remove(row.id)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="h-4 w-4" /> Delete
-              </button>
+               <button
+                 onClick={() => execute(`delete-${row.id}`, () => remove(row.id), "Service deleted")}
+                 className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
+                 disabled={loading === `delete-${row.id}`}
+               >
+                 {loading === `delete-${row.id}` ? "Deleting..." : <><Trash2 className="h-4 w-4" /> Delete</>}
+               </button>
             </div>
           </article>
         ))}

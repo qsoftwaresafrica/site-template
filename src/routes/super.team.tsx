@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Plus, Trash2, Save, X } from "lucide-react";
+import { Plus, Save, Trash2, X } from "lucide-react";
 import { adminListTeam, saveTeamMember, deleteTeamMember } from "@/lib/admin.functions";
-import { Field, inputClass, PageHeading, Panel, ImagePicker, run } from "@/components/admin/ui";
+import { Field, inputClass, ImagePicker, PageHeading, Panel, useAction } from "@/components/admin/ui";
+import { imageOf } from "@/components/site/Icon";
 
 type Draft = {
   id?: string;
@@ -14,14 +15,7 @@ type Draft = {
   order_index: number;
 };
 
-const empty: Draft = {
-  name: "",
-  role: "",
-  bio: "",
-  photo_id: null,
-  photo_url: null,
-  order_index: 0,
-};
+const empty: Draft = { name: "", role: "", bio: "", photo_id: null, photo_url: null, order_index: 0 };
 
 export const Route = createFileRoute("/super/team")({
   loader: () => adminListTeam(),
@@ -32,10 +26,11 @@ function TeamAdmin() {
   const rows = Route.useLoaderData();
   const router = useRouter();
   const [draft, setDraft] = useState<Draft | null>(null);
+  const { loading, execute } = useAction();
 
   async function save() {
     if (!draft) return;
-    const ok = await run(() => saveTeamMember({ data: draft }), "Team member saved");
+    const ok = await execute("save", () => saveTeamMember({ data: draft }), "Team member saved");
     if (ok) {
       setDraft(null);
       await router.invalidate();
@@ -44,14 +39,15 @@ function TeamAdmin() {
 
   async function remove(id: string) {
     if (!confirm("Remove this team member?")) return;
-    if (await run(() => deleteTeamMember({ data: { id } }), "Team member deleted")) await router.invalidate();
+    await execute(`delete-${id}`, () => deleteTeamMember({ data: { id } }), "Team member deleted");
+    await router.invalidate();
   }
 
   return (
     <>
       <PageHeading
         title="Team"
-        description="People shown on the team page."
+        description="People shown on the about page."
         action={
           <button
             onClick={() => setDraft({ ...empty, order_index: rows.length })}
@@ -69,16 +65,17 @@ function TeamAdmin() {
             action={
               <div className="flex gap-2">
                 <button
-                  onClick={() => setDraft(null)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm"
+                  onClick={() => void execute("save", save, "Team member saved")}
+                  className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
+                  disabled={loading === "save"}
                 >
-                  <X className="h-4 w-4" /> Cancel
+                  {loading === "save" ? "Saving..." : <><Save className="h-4 w-4" /> Save</>}
                 </button>
                 <button
-                  onClick={() => void save()}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
+                  onClick={() => setDraft(null)}
+                  className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm font-semibold"
                 >
-                  <Save className="h-4 w-4" /> Save
+                  <X className="h-4 w-4" /> Cancel
                 </button>
               </div>
             }
@@ -91,42 +88,33 @@ function TeamAdmin() {
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                 />
               </Field>
-              <Field label="Role / title">
+              <Field label="Role">
                 <input
                   className={inputClass}
                   value={draft.role}
                   onChange={(e) => setDraft({ ...draft, role: e.target.value })}
                 />
               </Field>
-              <Field label="Order">
-                <input
-                  type="number"
+              <Field label="Short bio">
+                <textarea
+                  rows={3}
                   className={inputClass}
-                  value={draft.order_index}
-                  onChange={(e) => setDraft({ ...draft, order_index: Number(e.target.value) })}
+                  value={draft.bio}
+                  onChange={(e) => setDraft({ ...draft, bio: e.target.value })}
                 />
               </Field>
-              <ImagePicker
-                mediaId={draft.photo_id}
-                imageUrl={draft.photo_url ?? null}
-                onChange={(id) => setDraft({ ...draft, photo_id: id })}
-              />
-              <div className="md:col-span-2">
-                <Field label="Photo URL" hint="Used if no image is uploaded.">
+              <div className="space-y-4">
+                <ImagePicker
+                  label="Passport photo"
+                  mediaId={draft.photo_id}
+                  onChange={(photo_id) => setDraft({ ...draft, photo_id })}
+                />
+                <Field label="Display order">
                   <input
+                    type="number"
                     className={inputClass}
-                    value={draft.photo_url ?? ""}
-                    onChange={(e) => setDraft({ ...draft, photo_url: e.target.value || null })}
-                  />
-                </Field>
-              </div>
-              <div className="md:col-span-2">
-                <Field label="Short bio">
-                  <textarea
-                    rows={4}
-                    className={inputClass}
-                    value={draft.bio}
-                    onChange={(e) => setDraft({ ...draft, bio: e.target.value })}
+                    value={draft.order_index}
+                    onChange={(e) => setDraft({ ...draft, order_index: Number(e.target.value) })}
                   />
                 </Field>
               </div>
@@ -135,27 +123,24 @@ function TeamAdmin() {
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {rows.map((row: any) => (
-          <article key={row.id} className="rounded-xl border border-border bg-card p-5 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted">
-                  {row.photo_url ? (
-                    <img src={row.photo_url} alt="" className="h-full w-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                      {row.name?.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold">{row.name}</h3>
-                  <p className="text-xs text-muted-foreground">{row.role || "—"}</p>
-                </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {rows.map((row) => (
+          <div key={row.id} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="h-14 w-14 overflow-hidden rounded-full border border-border bg-muted">
+                {imageOf(row.photo_id, row.photo_url) ? (
+                  <img
+                    src={imageOf(row.photo_id, row.photo_url)!}
+                    alt={row.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : null}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate font-semibold">{row.name}</p>
+                <p className="truncate text-sm text-muted-foreground">{row.role}</p>
               </div>
             </div>
-            <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">{row.bio}</p>
             <div className="mt-4 flex gap-2">
               <button
                 onClick={() =>
@@ -164,27 +149,28 @@ function TeamAdmin() {
                     name: row.name,
                     role: row.role ?? "",
                     bio: row.bio ?? "",
-                    photo_id: row.photo_id,
-                    photo_url: row.photo_url,
+                    photo_id: row.photo_id ?? null,
                     order_index: row.order_index ?? 0,
                   })
                 }
-                className="rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted"
+                className="rounded-md border border-border px-3 py-1.5 text-sm font-semibold"
               >
                 Edit
               </button>
-              <button
-                onClick={() => void remove(row.id)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="h-4 w-4" /> Delete
-              </button>
+               <button
+                 onClick={async () => {
+                   if (!confirm(`Remove ${row.name}?`)) return;
+                   await execute(`delete-${row.id}`, () => deleteTeamMember({ data: { id: row.id } }), "Removed");
+                   await router.invalidate();
+                 }}
+                 className="rounded-md border border-border px-3 py-1.5 text-sm font-semibold text-muted-foreground hover:text-destructive"
+                 disabled={loading === `delete-${row.id}`}
+               >
+                 {loading === `delete-${row.id}` ? "..." : <Trash2 className="h-4 w-4" />}
+               </button>
             </div>
-          </article>
+          </div>
         ))}
-        {rows.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No team members yet.</p>
-        ) : null}
       </div>
     </>
   );

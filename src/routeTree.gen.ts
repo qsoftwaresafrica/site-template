@@ -18,6 +18,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SuperRouteImport } from './routes/super'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as QsaInfoRouteImport } from './routes/qsa.info'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as SuperIndexRouteImport } from './routes/super.index'
@@ -30,6 +31,7 @@ import { Route as SuperHeroRouteImport } from './routes/super.hero'
 import { Route as SuperInquiriesRouteImport } from './routes/super.inquiries'
 import { Route as SuperLoginRouteImport } from './routes/super.login'
 import { Route as SuperServicesRouteImport } from './routes/super.services'
+import { Route as SuperSettingsRouteImport } from './routes/super.settings'
 import { Route as SuperSocialsRouteImport } from './routes/super.socials'
 import { Route as SuperTeamRouteImport } from './routes/super.team'
 import { Route as SuperUsersRouteImport } from './routes/super.users'
@@ -78,6 +80,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QsaInfoRoute = QsaInfoRouteImport.update({
+  id: '/qsa/info',
+  path: '/qsa/info',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
@@ -140,6 +147,11 @@ const SuperServicesRoute = SuperServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => SuperRoute,
 } as any)
+const SuperSettingsRoute = SuperSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SuperRoute,
+} as any)
 const SuperSocialsRoute = SuperSocialsRouteImport.update({
   id: '/socials',
   path: '/socials',
@@ -170,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super': typeof SuperRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/qsa/info': typeof QsaInfoRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/super/about': typeof SuperAboutRoute
   '/super/blog': typeof SuperBlogRoute
@@ -180,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
+  '/super/settings': typeof SuperSettingsRoute
   '/super/socials': typeof SuperSocialsRoute
   '/super/team': typeof SuperTeamRoute
   '/super/users': typeof SuperUsersRoute
@@ -196,6 +210,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/qsa/info': typeof QsaInfoRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/super/about': typeof SuperAboutRoute
   '/super/blog': typeof SuperBlogRoute
@@ -206,6 +221,7 @@ export interface FileRoutesByTo {
   '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
+  '/super/settings': typeof SuperSettingsRoute
   '/super/socials': typeof SuperSocialsRoute
   '/super/team': typeof SuperTeamRoute
   '/super/users': typeof SuperUsersRoute
@@ -224,6 +240,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super': typeof SuperRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/qsa/info': typeof QsaInfoRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/super/about': typeof SuperAboutRoute
   '/super/blog': typeof SuperBlogRoute
@@ -234,6 +251,7 @@ export interface FileRoutesById {
   '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
+  '/super/settings': typeof SuperSettingsRoute
   '/super/socials': typeof SuperSocialsRoute
   '/super/team': typeof SuperTeamRoute
   '/super/users': typeof SuperUsersRoute
@@ -253,6 +271,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/super'
     | '/blog/$slug'
+    | '/qsa/info'
     | '/services/$slug'
     | '/super/about'
     | '/super/blog'
@@ -263,6 +282,7 @@ export interface FileRouteTypes {
     | '/super/inquiries'
     | '/super/login'
     | '/super/services'
+    | '/super/settings'
     | '/super/socials'
     | '/super/team'
     | '/super/users'
@@ -279,6 +299,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/blog/$slug'
+    | '/qsa/info'
     | '/services/$slug'
     | '/super/about'
     | '/super/blog'
@@ -289,6 +310,7 @@ export interface FileRouteTypes {
     | '/super/inquiries'
     | '/super/login'
     | '/super/services'
+    | '/super/settings'
     | '/super/socials'
     | '/super/team'
     | '/super/users'
@@ -306,6 +328,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/super'
     | '/blog/$slug'
+    | '/qsa/info'
     | '/services/$slug'
     | '/super/about'
     | '/super/blog'
@@ -316,6 +339,7 @@ export interface FileRouteTypes {
     | '/super/inquiries'
     | '/super/login'
     | '/super/services'
+    | '/super/settings'
     | '/super/socials'
     | '/super/team'
     | '/super/users'
@@ -334,6 +358,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuperRoute: typeof SuperRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
+  QsaInfoRoute: typeof QsaInfoRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -403,6 +428,13 @@ declare module '@tanstack/react-router' {
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qsa/info': {
+      id: '/qsa/info'
+      path: '/qsa/info'
+      fullPath: '/qsa/info'
+      preLoaderRoute: typeof QsaInfoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services/': {
@@ -489,6 +521,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperServicesRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/settings': {
+      id: '/super/settings'
+      path: '/settings'
+      fullPath: '/super/settings'
+      preLoaderRoute: typeof SuperSettingsRouteImport
+      parentRoute: typeof SuperRoute
+    }
     '/super/socials': {
       id: '/super/socials'
       path: '/socials'
@@ -530,6 +569,7 @@ interface SuperRouteChildren {
   SuperInquiriesRoute: typeof SuperInquiriesRoute
   SuperLoginRoute: typeof SuperLoginRoute
   SuperServicesRoute: typeof SuperServicesRoute
+  SuperSettingsRoute: typeof SuperSettingsRoute
   SuperSocialsRoute: typeof SuperSocialsRoute
   SuperTeamRoute: typeof SuperTeamRoute
   SuperUsersRoute: typeof SuperUsersRoute
@@ -546,6 +586,7 @@ const SuperRouteChildren: SuperRouteChildren = {
   SuperInquiriesRoute: SuperInquiriesRoute,
   SuperLoginRoute: SuperLoginRoute,
   SuperServicesRoute: SuperServicesRoute,
+  SuperSettingsRoute: SuperSettingsRoute,
   SuperSocialsRoute: SuperSocialsRoute,
   SuperTeamRoute: SuperTeamRoute,
   SuperUsersRoute: SuperUsersRoute,
@@ -563,6 +604,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuperRoute: SuperRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
+  QsaInfoRoute: QsaInfoRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,

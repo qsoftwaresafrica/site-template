@@ -10,6 +10,10 @@ import {
   siWhatsapp,
   siTiktok,
   siTelegram,
+  siDiscord,
+  siReddit,
+  siPinterest,
+  siSnapchat,
 } from "simple-icons";
 
 const BRAND_ICONS: Record<string, SimpleIcon> = {
@@ -22,6 +26,10 @@ const BRAND_ICONS: Record<string, SimpleIcon> = {
   tiktok: siTiktok,
   telegram: siTelegram,
   github: siGithub,
+  discord: siDiscord,
+  reddit: siReddit,
+  pinterest: siPinterest,
+  snapchat: siSnapchat,
 };
 
 function toPascal(name: string) {
@@ -73,7 +81,6 @@ export function SocialIcon({
         width={size}
         height={size}
         className={className}
-        style={{ color }}
         fill="currentColor"
       >
         <path d={icon.path} />
@@ -95,6 +102,10 @@ export const socialIcons: Record<string, { icon: string | SimpleIcon; color: str
   tiktok: { icon: siTiktok, color: "#000000" },
   telegram: { icon: siTelegram, color: "#0088cc" },
   github: { icon: siGithub, color: "#181717" },
+  discord: { icon: siDiscord, color: "#5865F2" },
+  reddit: { icon: siReddit, color: "#FF4500" },
+  pinterest: { icon: siPinterest, color: "#E60023" },
+  snapchat: { icon: siSnapchat, color: "#FFFC00" },
   email: { icon: "mail", color: "#EA4335" },
   phone: { icon: "phone", color: "#34B7F1" },
   website: { icon: "globe", color: "#6366F1" },

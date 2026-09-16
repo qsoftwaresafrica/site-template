@@ -2,7 +2,7 @@ import { useState, useMemo, type ReactNode } from "react";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Plus, Trash2, Save, X, Search } from "lucide-react";
 import { adminListSocials, saveSocials, deleteSocial } from "@/lib/admin.functions";
-import { Field, inputClass, PageHeading, Panel, run } from "@/components/admin/ui";
+import { Field, inputClass, PageHeading, Panel, useAction } from "@/components/admin/ui";
 import { Icon, SocialIcon, socialIcons } from "@/components/site/Icon";
 
 type Draft = {
@@ -92,6 +92,7 @@ function SocialsAdmin() {
   const rows = Route.useLoaderData();
   const router = useRouter();
   const [draft, setDraft] = useState<Draft | null>(null);
+  const { loading, execute } = useAction();
 
   async function save() {
     if (!draft) return;
@@ -101,7 +102,7 @@ function SocialsAdmin() {
         { ...draft, order_index: draft.order_index },
       ],
     };
-    const ok = await run(() => saveSocials({ data: payload }), "Socials saved");
+    const ok = await execute("save", () => saveSocials({ data: payload }), "Socials saved");
     if (ok) {
       setDraft(null);
       await router.invalidate();
@@ -110,15 +111,16 @@ function SocialsAdmin() {
 
   async function toggle(id: string, enabled: boolean) {
     const payload = {
-      rows: rows.map((r: any) => ({ ...r, enabled: !enabled })),
+      rows: rows.map((r: any) => (r.id === id ? { ...r, enabled: !enabled } : r)),
     };
-    const ok = await run(() => saveSocials({ data: payload }), enabled ? "Social disabled" : "Social enabled");
-    if (ok) await router.invalidate();
+    await execute(id, () => saveSocials({ data: payload }), enabled ? "Social disabled" : "Social enabled");
+    await router.invalidate();
   }
 
   async function remove(id: string) {
     if (!confirm("Delete this social link?")) return;
-    if (await run(() => deleteSocial({ data: { id } }), "Social deleted")) await router.invalidate();
+    await execute(`delete-${id}`, () => deleteSocial({ data: { id } }), "Social deleted");
+    await router.invalidate();
   }
 
   return (
@@ -149,10 +151,11 @@ function SocialsAdmin() {
                   <X className="h-4 w-4" /> Cancel
                 </button>
                 <button
-                  onClick={() => void save()}
+                  onClick={() => void execute("save", save, "Socials saved")}
                   className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
+                  disabled={loading === "save"}
                 >
-                  <Save className="h-4 w-4" /> Save
+                  {loading === "save" ? "Saving..." : <><Save className="h-4 w-4" /> Save</>}
                 </button>
               </div>
             }
@@ -244,12 +247,13 @@ function SocialsAdmin() {
                 >
                   Edit
                 </button>
-                <button
-                  onClick={() => void remove(row.id)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                 <button
+                   onClick={() => execute(`delete-${row.id}`, () => remove(row.id), "Social deleted")}
+                   className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
+                   disabled={loading === `delete-${row.id}`}
+                 >
+                   {loading === `delete-${row.id}` ? "Deleting..." : <><Trash2 className="h-4 w-4" /></>}
+                 </button>
               </div>
             </div>
           ))}

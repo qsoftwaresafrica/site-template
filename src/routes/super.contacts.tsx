@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Save, Plus, Trash2 } from "lucide-react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { Plus, Save, Trash2 } from "lucide-react";
 import { getSetting, saveSetting } from "@/lib/admin.functions";
-import { Field, inputClass, PageHeading, Panel, run } from "@/components/admin/ui";
+import { Field, inputClass, PageHeading, Panel, useAction } from "@/components/admin/ui";
 import type { ContactSettings } from "@/lib/public.functions";
 
 const fallback: ContactSettings = {
@@ -19,21 +19,67 @@ export const Route = createFileRoute("/super/contacts")({
   component: ContactsAdmin,
 });
 
+function ListEditor({
+  label,
+  values,
+  placeholder,
+  onChange,
+}: {
+  label: string;
+  values: string[];
+  placeholder: string;
+  onChange: (next: string[]) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
+      {values.map((value, i) => (
+        <div key={i} className="flex gap-2">
+          <input
+            className={inputClass}
+            value={value}
+            placeholder={placeholder}
+            onChange={(e) => onChange(values.map((v, j) => (j === i ? e.target.value : v)))}
+          />
+          <button
+            type="button"
+            onClick={() => onChange(values.filter((_, j) => j !== i))}
+            className="rounded-md border border-border px-2 text-muted-foreground hover:text-destructive"
+            aria-label="Remove"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => onChange([...values, ""])}
+        className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-xs font-semibold"
+      >
+        <Plus className="h-3.5 w-3.5" /> Add
+      </button>
+    </div>
+  );
+}
+
 function ContactsAdmin() {
   const loaded = Route.useLoaderData();
-  const [contacts, setContacts] = useState<ContactSettings>({ ...fallback, ...(loaded ?? {}) });
+  const router = useRouter();
+  const [data, setData] = useState<ContactSettings>({ ...fallback, ...(loaded ?? {}) });
+  const { loading, execute } = useAction();
 
-  const patch = (patch: Partial<ContactSettings>) => setContacts({ ...contacts, ...patch });
+  const patch = (patch: Partial<ContactSettings>) => setData({ ...data, ...patch });
 
   return (
     <>
       <PageHeading
         title="Contacts"
-        description="Company contact details shown on the website."
+        description="Phone numbers, emails, address, working hours and the map."
         action={
           <button
-            onClick={() => void run(() => saveSetting({ data: { key: "contacts", value: contacts } }), "Contacts saved")}
+            onClick={() => void execute("save", () => saveSetting({ data: { key: "contacts", value: data } }), "Contacts saved")}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            disabled={loading === "save"}
           >
             <Save className="h-4 w-4" /> Save changes
           </button>
@@ -46,148 +92,116 @@ function ContactsAdmin() {
             <Field label="Company name">
               <input
                 className={inputClass}
-                value={contacts.companyName}
-                onChange={(e) => patch({ companyName: e.target.value })}
+                value={data.companyName}
+                onChange={(e) => setData({ ...data, companyName: e.target.value })}
               />
             </Field>
-          </div>
-        </Panel>
-
-        <Panel title="Address">
-          <Field label="Address lines" hint="One line per entry.">
-            <textarea
-              rows={4}
-              className={inputClass}
-              value={contacts.addressLines.join("\n")}
-              onChange={(e) =>
-                patch({
-                  addressLines: e.target.value
-                    .split("\n")
-                    .map((v) => v.trim())
-                    .filter(Boolean),
-                })
-              }
+            <ListEditor
+              label="Address lines"
+              values={data.addressLines ?? []}
+              placeholder="Street, city"
+              onChange={(addressLines) => setData({ ...data, addressLines })}
             />
-          </Field>
-        </Panel>
-
-        <Panel title="Communication">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Phone numbers" hint="One per line.">
-              <textarea
-                rows={3}
-                className={inputClass}
-                value={contacts.phones.join("\n")}
-                onChange={(e) =>
-                  patch({
-                    phones: e.target.value
-                      .split("\n")
-                      .map((v) => v.trim())
-                      .filter(Boolean),
-                  })
-                }
-              />
-            </Field>
-            <Field label="Email addresses" hint="One per line.">
-              <textarea
-                rows={3}
-                className={inputClass}
-                value={contacts.emails.join("\n")}
-                onChange={(e) =>
-                  patch({
-                    emails: e.target.value
-                      .split("\n")
-                      .map((v) => v.trim())
-                      .filter(Boolean),
-                  })
-                }
-              />
-            </Field>
+            <ListEditor
+              label="Phone numbers"
+              values={data.phones ?? []}
+              placeholder="+255 ..."
+              onChange={(phones) => setData({ ...data, phones })}
+            />
+            <ListEditor
+              label="Email addresses"
+              values={data.emails ?? []}
+              placeholder="info@company.co.tz"
+              onChange={(emails) => setData({ ...data, emails })}
+            />
           </div>
         </Panel>
 
-        <Panel
-          title="Working hours"
-          description="Shown on the contact page."
-          action={
-            <button
-              onClick={() =>
-                patch({
-                  hours: [...contacts.hours, { label: "", value: "" }],
-                })
-              }
-              className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted"
-            >
-              <Plus className="h-4 w-4" /> Add row
-            </button>
-          }
-        >
-          <div className="space-y-3">
-            {contacts.hours.map((hour, index) => (
-              <div key={index} className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-                <Field label="Label">
-                  <input
-                    className={inputClass}
-                    value={hour.label}
-                    onChange={(e) => {
-                      const next = [...contacts.hours];
-                      next[index] = { ...next[index], label: e.target.value };
-                      patch({ hours: next });
-                    }}
-                  />
-                </Field>
-                <Field label="Hours">
-                  <input
-                    className={inputClass}
-                    value={hour.value}
-                    onChange={(e) => {
-                      const next = [...contacts.hours];
-                      next[index] = { ...next[index], value: e.target.value };
-                      patch({ hours: next });
-                    }}
-                  />
-                </Field>
-                <button
-                  onClick={() =>
-                    patch({
-                      hours: contacts.hours.filter((_, i) => i !== index),
+        <Panel title="Working hours">
+          <div className="space-y-2">
+            {(data.hours ?? []).map((row, i) => (
+              <div key={i} className="flex flex-wrap gap-2">
+                <input
+                  className={`${inputClass} sm:max-w-[220px]`}
+                  value={row.label}
+                  placeholder="Monday - Friday"
+                  onChange={(e) =>
+                    setData({
+                      ...data,
+                      hours: data.hours.map((h, j) =>
+                        j === i ? { ...h, label: e.target.value } : h,
+                      ),
                     })
                   }
-                  className="mt-6 inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
+                />
+                <input
+                  className={`${inputClass} sm:max-w-[220px]`}
+                  value={row.value}
+                  placeholder="08:00 - 17:00"
+                  onChange={(e) =>
+                    setData({
+                      ...data,
+                      hours: data.hours.map((h, j) =>
+                        j === i ? { ...h, value: e.target.value } : h,
+                      ),
+                    })
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setData({ ...data, hours: data.hours.filter((_, j) => j !== i) })
+                  }
+                  className="rounded-md border border-border px-2 text-muted-foreground hover:text-destructive"
+                  aria-label="Remove"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             ))}
-            {contacts.hours.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No hours yet.</p>
-            ) : null}
+            <button
+              type="button"
+              onClick={() =>
+                setData({ ...data, hours: [...(data.hours ?? []), { label: "", value: "" }] })
+              }
+              className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-xs font-semibold"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add row
+            </button>
           </div>
         </Panel>
 
-        <Panel title="Map">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <label className="flex items-center gap-2 text-sm font-medium">
-              <input
-                type="checkbox"
-                checked={contacts.map.enabled}
-                onChange={(e) => patch({ map: { ...contacts.map, enabled: e.target.checked } })}
-              />
-              Show map
-            </label>
-            <Field label="Map query" className="md:col-span-2">
+        <Panel title="Map" description="Shown on the contact page.">
+          <div className="grid gap-4 md:grid-cols-3">
+            <Field label="Show map">
+              <select
+                className={inputClass}
+                value={data.map?.enabled ? "yes" : "no"}
+                onChange={(e) =>
+                  setData({ ...data, map: { ...data.map, enabled: e.target.value === "yes" } })
+                }
+              >
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </Field>
+            <Field label="Location search" hint="Address or place name used by Google Maps.">
               <input
                 className={inputClass}
-                value={contacts.map.query}
-                onChange={(e) => patch({ map: { ...contacts.map, query: e.target.value } })}
+                value={data.map?.query ?? ""}
+                onChange={(e) => setData({ ...data, map: { ...data.map, query: e.target.value } })}
               />
             </Field>
             <Field label="Zoom">
               <input
                 type="number"
+                min={1}
+                max={21}
                 className={inputClass}
-                value={contacts.map.zoom}
-                onChange={(e) => patch({ map: { ...contacts.map, zoom: Number(e.target.value) } })}
+                value={data.map?.zoom ?? 15}
+                onChange={(e) =>
+                  setData({ ...data, map: { ...data.map, zoom: Number(e.target.value) } })
+                }
               />
             </Field>
           </div>

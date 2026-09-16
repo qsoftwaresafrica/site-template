@@ -69,14 +69,14 @@ export const uploadMedia = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     await guard();
-    const hex = toHex(data.base64);
+    const bytes = Buffer.from(data.base64, "base64");
     const { data: row, error } = await (await client())
       .from("media")
       .insert({
         filename: data.filename,
         mime: data.mime,
-        bytes: hex,
-        byte_size: Math.floor((data.base64.length * 3) / 4),
+        bytes,
+        byte_size: bytes.length,
         alt: data.alt ?? null,
         width: data.width ?? null,
         height: data.height ?? null,
@@ -112,6 +112,70 @@ export const saveSetting = createServerFn({ method: "POST" })
       .upsert({ key: data.key, value: data.value as never, updated_at: new Date().toISOString() });
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+/* ------------------------------------------------------------ profile --- */
+
+export const saveMyProfile = createServerFn({ method: "POST" })
+  .validator(
+    (d: unknown) =>
+      z
+        .object({
+          name: z.string().min(1).max(160),
+          email: z.string().email().max(200),
+          phone: z.string().max(60).nullable().optional(),
+          photo_id: z.string().uuid().nullable().optional(),
+        })
+        .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const me = await guard();
+    const c = await client();
+    const { error } = await c
+      .from("site_users")
+      .update({
+        name: data.name,
+        email: data.email.trim().toLowerCase(),
+        phone: data.phone ?? null,
+        photo_id: data.photo_id ?? null,
+      })
+      .eq("id", me.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const changeMyPassword = createServerFn({ method: "POST" })
+  .validator(
+    (d: unknown) =>
+      z
+        .object({
+          oldPassword: z.string().min(1).max(200),
+          newPassword: z.string().min(8).max(200),
+          confirmPassword: z.string().min(8).max(200),
+        })
+        .parse(d),
+  )
+  .handler(async ({ data }) => {
+    if (data.newPassword !== data.confirmPassword) {
+      throw new Error("New passwords do not match.");
+    }
+    const me = await guard();
+    const { hashPassword, verifyPassword } = await import("./auth.server");
+    const c = await client();
+    const { data: row } = await c
+      .from("site_users")
+      .select("password_hash")
+      .eq("id", me.id)
+      .maybeSingle();
+    if (!row || !verifyPassword(data.oldPassword, row.password_hash)) {
+      throw new Error("Current password is incorrect.");
+    }
+    const { error } = await c
+      .from("site_users")
+      .update({ password_hash: hashPassword(data.newPassword) })
+      .eq("id", me.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
   });
 
 /* ------------------------------------------------------------ services --- */
@@ -175,25 +239,37 @@ const articleSchema = z.object({
 });
 
 export const adminListArticles = createServerFn({ method: "GET" })
-  .validator((d: { q?: string; status?: string } | undefined) =>
+  .validator((d: { q?: string; status?: string; page?: number; pageSize?: number } | undefined) =>
     z
-      .object({ q: z.string().max(120).optional(), status: z.string().max(20).optional() })
+      .object({
+        q: z.string().max(120).optional(),
+        status: z.string().max(20).optional(),
+        page: z.number().int().min(1).optional(),
+        pageSize: z.number().int().min(10).max(200).optional(),
+      })
       .parse(d ?? {}),
   )
   .handler(async ({ data }) => {
     await guard();
+    const page = data.page ?? 1;
+    const pageSize = data.pageSize ?? 50;
     let query = (await client())
       .from("articles")
-      .select("id,slug,title,excerpt,body,status,author,tags,cover_id,cover_url,published_at,updated_at")
-      .order("updated_at", { ascending: false })
-      .limit(200);
+      .select("id,slug,title,excerpt,body,status,author,tags,cover_id,cover_url,published_at,updated_at", { count: "exact" })
+      .order("updated_at", { ascending: false });
     if (data.status && data.status !== "all") query = query.eq("status", data.status);
     if (data.q) {
       const term = data.q.replace(/[%,()]/g, " ").trim();
       if (term) query = query.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`);
     }
-    const { data: rows } = await query;
-    return rows ?? [];
+    const { data: rows, count } = await query.range((page - 1) * pageSize, page * pageSize - 1);
+    return {
+      rows: rows ?? [],
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+    };
   });
 
 export const adminGetArticle = createServerFn({ method: "GET" })
@@ -251,15 +327,39 @@ export const deleteArticle = createServerFn({ method: "POST" })
 
 /* ------------------------------------------------------------- gallery --- */
 
-export const adminListGallery = createServerFn({ method: "GET" }).handler(async () => {
-  await guard();
-  const { data } = await (await client())
-    .from("gallery_photos")
-    .select("id,media_id,image_url,caption,category,width,height,posted_on")
-    .order("posted_on", { ascending: false })
-    .limit(200);
-  return data ?? [];
-});
+export const adminListGallery = createServerFn({ method: "GET" })
+  .validator((d: { page?: number; pageSize?: number; q?: string; category?: string } | undefined) =>
+    z
+      .object({
+        page: z.number().int().min(1).optional(),
+        pageSize: z.number().int().min(10).max(200).optional(),
+        q: z.string().max(120).optional(),
+        category: z.string().max(80).optional(),
+      })
+      .parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    await guard();
+    const page = data.page ?? 1;
+    const pageSize = data.pageSize ?? 50;
+    let query = (await client())
+      .from("gallery_photos")
+      .select("id,media_id,image_url,caption,category,width,height,posted_on", { count: "exact" })
+      .order("posted_on", { ascending: false });
+    if (data.category && data.category !== "all") query = query.eq("category", data.category);
+    if (data.q) {
+      const term = data.q.replace(/[%,()]/g, " ").trim();
+      if (term) query = query.or(`caption.ilike.%${term}%,category.ilike.%${term}%`);
+    }
+    const { data: rows, count } = await query.range((page - 1) * pageSize, page * pageSize - 1);
+    return {
+      rows: rows ?? [],
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+    };
+  });
 
 export const savePhoto = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
@@ -341,16 +441,40 @@ export const deleteTeamMember = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/* --------------------------------------------------------------- users --- */
+/* ---------------------------------------------------------------- users --- */
 
-export const adminListUsers = createServerFn({ method: "GET" }).handler(async () => {
-  await guard();
-  const { data } = await (await client())
-    .from("site_users")
-    .select("id,name,email,phone,role,photo_id,active,created_at")
-    .order("created_at");
-  return data ?? [];
-});
+export const adminListUsers = createServerFn({ method: "GET" })
+  .validator((d: { page?: number; pageSize?: number; q?: string } | undefined) =>
+    z
+      .object({
+        page: z.number().int().min(1).optional(),
+        pageSize: z.number().int().min(10).max(200).optional(),
+        q: z.string().max(120).optional(),
+      })
+      .parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    await guard();
+    const page = data.page ?? 1;
+    const pageSize = data.pageSize ?? 50;
+    const q = data.q?.trim();
+
+    let query = (await client()).from("site_users").select("*", { count: "exact" });
+
+    if (q) query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%`);
+
+    const { data: rows, count } = await query
+      .order("created_at")
+      .range((page - 1) * pageSize, page * pageSize - 1);
+
+    return {
+      rows: rows ?? [],
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+    };
+  });
 
 export const saveUser = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
@@ -454,15 +578,48 @@ export const deleteSocial = createServerFn({ method: "POST" })
 
 /* ----------------------------------------------------------- inquiries --- */
 
-export const adminListInquiries = createServerFn({ method: "GET" }).handler(async () => {
-  await guard();
-  const { data } = await (await client())
-    .from("inquiries")
-    .select("id,name,email,subject,message,handled,created_at")
-    .order("created_at", { ascending: false })
-    .limit(300);
-  return data ?? [];
-});
+export const adminListInquiries = createServerFn({ method: "GET" })
+  .validator((d: { page?: number; pageSize?: number; from?: string; to?: string; q?: string } | undefined) =>
+    z
+      .object({
+        page: z.number().int().min(1).optional(),
+        pageSize: z.number().int().min(10).max(200).optional(),
+        from: z.string().max(20).optional(),
+        to: z.string().max(20).optional(),
+        q: z.string().max(120).optional(),
+      })
+      .parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    await guard();
+    const page = data.page ?? 1;
+    const pageSize = data.pageSize ?? 50;
+    const from = data.from;
+    const to = data.to;
+    const q = data.q?.trim();
+
+    let query = (await client()).from("inquiries").select("*");
+
+    if (from) query = query.gte("created_at", from);
+    if (to) {
+      const end = new Date(to);
+      end.setHours(23, 59, 59, 999);
+      query = query.lte("created_at", end.toISOString());
+    }
+    if (q) query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%,subject.ilike.%${q}%`);
+
+    const { data: rows, count } = await query
+      .order("created_at", { ascending: false })
+      .range((page - 1) * pageSize, page * pageSize - 1);
+
+    return {
+      rows: rows ?? [],
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+    };
+  });
 
 export const setInquiryHandled = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
