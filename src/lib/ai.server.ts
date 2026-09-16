@@ -21,7 +21,7 @@ export type AiConfig = {
   model: string;
   temperature: number;
   maxTokens: number;
-  name?: string;
+  name: string;
 };
 
 export function aiConfig(): AiConfig {
