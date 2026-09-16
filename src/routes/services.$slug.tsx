@@ -65,13 +65,10 @@ function ServiceDetail() {
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">{service.summary}</p>
 
           {service.body ? (
-            <div className="prose-article mt-8">
-              {String(service.body)
-                .split(/\n{2,}/)
-                .map((p) => (
-                  <p key={p}>{p}</p>
-                ))}
-            </div>
+            <div
+              className="prose-article mt-8"
+              dangerouslySetInnerHTML={{ __html: String(service.body) }}
+            />
           ) : null}
 
           {Array.isArray(service.highlights) && service.highlights.length ? (

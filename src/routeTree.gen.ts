@@ -21,10 +21,18 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as SuperIndexRouteImport } from './routes/super.index'
+import { Route as SuperAboutRouteImport } from './routes/super.about'
+import { Route as SuperBlogRouteImport } from './routes/super.blog'
+import { Route as SuperContactsRouteImport } from './routes/super.contacts'
 import { Route as SuperDashboardRouteImport } from './routes/super.dashboard'
+import { Route as SuperGalleryRouteImport } from './routes/super.gallery'
 import { Route as SuperHeroRouteImport } from './routes/super.hero'
+import { Route as SuperInquiriesRouteImport } from './routes/super.inquiries'
 import { Route as SuperLoginRouteImport } from './routes/super.login'
 import { Route as SuperServicesRouteImport } from './routes/super.services'
+import { Route as SuperSocialsRouteImport } from './routes/super.socials'
+import { Route as SuperTeamRouteImport } from './routes/super.team'
+import { Route as SuperUsersRouteImport } from './routes/super.users'
 import { Route as ApiPublicMediaIdRouteImport } from './routes/api/public/media.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -87,14 +95,39 @@ const SuperIndexRoute = SuperIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SuperRoute,
 } as any)
+const SuperAboutRoute = SuperAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperBlogRoute = SuperBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperContactsRoute = SuperContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => SuperRoute,
+} as any)
 const SuperDashboardRoute = SuperDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => SuperRoute,
 } as any)
+const SuperGalleryRoute = SuperGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => SuperRoute,
+} as any)
 const SuperHeroRoute = SuperHeroRouteImport.update({
   id: '/hero',
   path: '/hero',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperInquiriesRoute = SuperInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
   getParentRoute: () => SuperRoute,
 } as any)
 const SuperLoginRoute = SuperLoginRouteImport.update({
@@ -105,6 +138,21 @@ const SuperLoginRoute = SuperLoginRouteImport.update({
 const SuperServicesRoute = SuperServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperSocialsRoute = SuperSocialsRouteImport.update({
+  id: '/socials',
+  path: '/socials',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperTeamRoute = SuperTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperUsersRoute = SuperUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => SuperRoute,
 } as any)
 const ApiPublicMediaIdRoute = ApiPublicMediaIdRouteImport.update({
@@ -123,10 +171,18 @@ export interface FileRoutesByFullPath {
   '/super': typeof SuperRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/super/about': typeof SuperAboutRoute
+  '/super/blog': typeof SuperBlogRoute
+  '/super/contacts': typeof SuperContactsRoute
   '/super/dashboard': typeof SuperDashboardRoute
+  '/super/gallery': typeof SuperGalleryRoute
   '/super/hero': typeof SuperHeroRoute
+  '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
+  '/super/socials': typeof SuperSocialsRoute
+  '/super/team': typeof SuperTeamRoute
+  '/super/users': typeof SuperUsersRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super/': typeof SuperIndexRoute
@@ -141,10 +197,18 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/super/about': typeof SuperAboutRoute
+  '/super/blog': typeof SuperBlogRoute
+  '/super/contacts': typeof SuperContactsRoute
   '/super/dashboard': typeof SuperDashboardRoute
+  '/super/gallery': typeof SuperGalleryRoute
   '/super/hero': typeof SuperHeroRoute
+  '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
+  '/super/socials': typeof SuperSocialsRoute
+  '/super/team': typeof SuperTeamRoute
+  '/super/users': typeof SuperUsersRoute
   '/blog': typeof BlogIndexRoute
   '/services': typeof ServicesIndexRoute
   '/super': typeof SuperIndexRoute
@@ -161,10 +225,18 @@ export interface FileRoutesById {
   '/super': typeof SuperRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/super/about': typeof SuperAboutRoute
+  '/super/blog': typeof SuperBlogRoute
+  '/super/contacts': typeof SuperContactsRoute
   '/super/dashboard': typeof SuperDashboardRoute
+  '/super/gallery': typeof SuperGalleryRoute
   '/super/hero': typeof SuperHeroRoute
+  '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
+  '/super/socials': typeof SuperSocialsRoute
+  '/super/team': typeof SuperTeamRoute
+  '/super/users': typeof SuperUsersRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super/': typeof SuperIndexRoute
@@ -182,10 +254,18 @@ export interface FileRouteTypes {
     | '/super'
     | '/blog/$slug'
     | '/services/$slug'
+    | '/super/about'
+    | '/super/blog'
+    | '/super/contacts'
     | '/super/dashboard'
+    | '/super/gallery'
     | '/super/hero'
+    | '/super/inquiries'
     | '/super/login'
     | '/super/services'
+    | '/super/socials'
+    | '/super/team'
+    | '/super/users'
     | '/blog/'
     | '/services/'
     | '/super/'
@@ -200,10 +280,18 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/blog/$slug'
     | '/services/$slug'
+    | '/super/about'
+    | '/super/blog'
+    | '/super/contacts'
     | '/super/dashboard'
+    | '/super/gallery'
     | '/super/hero'
+    | '/super/inquiries'
     | '/super/login'
     | '/super/services'
+    | '/super/socials'
+    | '/super/team'
+    | '/super/users'
     | '/blog'
     | '/services'
     | '/super'
@@ -219,10 +307,18 @@ export interface FileRouteTypes {
     | '/super'
     | '/blog/$slug'
     | '/services/$slug'
+    | '/super/about'
+    | '/super/blog'
+    | '/super/contacts'
     | '/super/dashboard'
+    | '/super/gallery'
     | '/super/hero'
+    | '/super/inquiries'
     | '/super/login'
     | '/super/services'
+    | '/super/socials'
+    | '/super/team'
+    | '/super/users'
     | '/blog/'
     | '/services/'
     | '/super/'
@@ -330,6 +426,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperIndexRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/about': {
+      id: '/super/about'
+      path: '/about'
+      fullPath: '/super/about'
+      preLoaderRoute: typeof SuperAboutRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/blog': {
+      id: '/super/blog'
+      path: '/blog'
+      fullPath: '/super/blog'
+      preLoaderRoute: typeof SuperBlogRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/contacts': {
+      id: '/super/contacts'
+      path: '/contacts'
+      fullPath: '/super/contacts'
+      preLoaderRoute: typeof SuperContactsRouteImport
+      parentRoute: typeof SuperRoute
+    }
     '/super/dashboard': {
       id: '/super/dashboard'
       path: '/dashboard'
@@ -337,11 +454,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperDashboardRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/gallery': {
+      id: '/super/gallery'
+      path: '/gallery'
+      fullPath: '/super/gallery'
+      preLoaderRoute: typeof SuperGalleryRouteImport
+      parentRoute: typeof SuperRoute
+    }
     '/super/hero': {
       id: '/super/hero'
       path: '/hero'
       fullPath: '/super/hero'
       preLoaderRoute: typeof SuperHeroRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/inquiries': {
+      id: '/super/inquiries'
+      path: '/inquiries'
+      fullPath: '/super/inquiries'
+      preLoaderRoute: typeof SuperInquiriesRouteImport
       parentRoute: typeof SuperRoute
     }
     '/super/login': {
@@ -358,6 +489,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperServicesRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/socials': {
+      id: '/super/socials'
+      path: '/socials'
+      fullPath: '/super/socials'
+      preLoaderRoute: typeof SuperSocialsRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/team': {
+      id: '/super/team'
+      path: '/team'
+      fullPath: '/super/team'
+      preLoaderRoute: typeof SuperTeamRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/users': {
+      id: '/super/users'
+      path: '/users'
+      fullPath: '/super/users'
+      preLoaderRoute: typeof SuperUsersRouteImport
+      parentRoute: typeof SuperRoute
+    }
     '/api/public/media/$id': {
       id: '/api/public/media/$id'
       path: '/api/public/media/$id'
@@ -369,18 +521,34 @@ declare module '@tanstack/react-router' {
 }
 
 interface SuperRouteChildren {
+  SuperAboutRoute: typeof SuperAboutRoute
+  SuperBlogRoute: typeof SuperBlogRoute
+  SuperContactsRoute: typeof SuperContactsRoute
   SuperDashboardRoute: typeof SuperDashboardRoute
+  SuperGalleryRoute: typeof SuperGalleryRoute
   SuperHeroRoute: typeof SuperHeroRoute
+  SuperInquiriesRoute: typeof SuperInquiriesRoute
   SuperLoginRoute: typeof SuperLoginRoute
   SuperServicesRoute: typeof SuperServicesRoute
+  SuperSocialsRoute: typeof SuperSocialsRoute
+  SuperTeamRoute: typeof SuperTeamRoute
+  SuperUsersRoute: typeof SuperUsersRoute
   SuperIndexRoute: typeof SuperIndexRoute
 }
 
 const SuperRouteChildren: SuperRouteChildren = {
+  SuperAboutRoute: SuperAboutRoute,
+  SuperBlogRoute: SuperBlogRoute,
+  SuperContactsRoute: SuperContactsRoute,
   SuperDashboardRoute: SuperDashboardRoute,
+  SuperGalleryRoute: SuperGalleryRoute,
   SuperHeroRoute: SuperHeroRoute,
+  SuperInquiriesRoute: SuperInquiriesRoute,
   SuperLoginRoute: SuperLoginRoute,
   SuperServicesRoute: SuperServicesRoute,
+  SuperSocialsRoute: SuperSocialsRoute,
+  SuperTeamRoute: SuperTeamRoute,
+  SuperUsersRoute: SuperUsersRoute,
   SuperIndexRoute: SuperIndexRoute,
 }
 

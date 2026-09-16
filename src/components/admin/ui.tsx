@@ -80,11 +80,13 @@ export function ImagePicker({
   mediaId,
   imageUrl,
   onChange,
+  onDimensions,
   label = "Image",
 }: {
   mediaId?: string | null;
   imageUrl?: string | null;
   onChange: (id: string | null) => void;
+  onDimensions?: (width: number, height: number) => void;
   label?: string;
 }) {
   const [busy, setBusy] = useState(false);
@@ -97,6 +99,9 @@ export function ImagePicker({
       const payload = await filePayload(file);
       const { id } = await uploadMedia({ data: payload });
       onChange(id);
+      if (payload.width && payload.height) {
+        onDimensions?.(payload.width, payload.height);
+      }
       toast.success("Image uploaded");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Upload failed");

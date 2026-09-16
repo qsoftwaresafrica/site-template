@@ -4,6 +4,7 @@ import { site, pageTitle } from "@/lib/site";
 import { getArticle } from "@/lib/public.functions";
 import { Reveal } from "@/components/site/Reveal";
 import { imageOf } from "@/components/site/Icon";
+import { markdownToHtml } from "@/lib/markdown";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
@@ -125,7 +126,7 @@ function ArticlePage() {
         className="prose-article mx-auto mt-10 max-w-3xl"
         delay={80}
       >
-        <div dangerouslySetInnerHTML={{ __html: article.body ?? "" }} />
+        {renderRichBody(article.body)}
       </Reveal>
 
       {more.length ? (
@@ -152,4 +153,10 @@ function ArticlePage() {
       ) : null}
     </article>
   );
+}
+
+function renderRichBody(body: string | null | undefined) {
+  if (!body) return null;
+  const html = /<[a-z][\s\S]*>/i.test(body) ? body : markdownToHtml(body);
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

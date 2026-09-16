@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { site } from "@/lib/site";
-import { Icon, socialIcons } from "./Icon";
+import { Icon, SocialIcon, socialIcons } from "./Icon";
 import type { Bootstrap } from "@/lib/public.functions";
 
 export function SiteFooter({ data }: { data: Bootstrap }) {
@@ -78,9 +78,9 @@ export function SiteFooter({ data }: { data: Bootstrap }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={s.platform}
-                    className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:-translate-y-0.5"
+                    className="grid h-9 w-9 place-items-center rounded-full transition-transform hover:-translate-y-0.5"
                   >
-                    <Icon name={socialIcons[s.platform] ?? "link"} size={16} />
+                    <SocialIcon platform={s.platform} size={16} />
                   </a>
                 ))}
               </div>

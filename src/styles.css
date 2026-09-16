@@ -70,7 +70,7 @@
   --ring: oklch(0.68 0.058 72);
   --ink: oklch(0.16 0.008 60);
   --ink-foreground: oklch(0.97 0.005 90);
-  --font-heading: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
@@ -128,8 +128,26 @@
   h4,
   h5 {
     font-family: var(--font-heading);
+    font-weight: 600;
     letter-spacing: -0.02em;
     text-wrap: balance;
+  }
+
+  .font-bold {
+    font-weight: 600;
+  }
+
+  .font-extrabold {
+    font-weight: 700;
+  }
+
+  .font-black {
+    font-weight: 800;
+  }
+
+  strong,
+  b {
+    font-weight: 600;
   }
 
   ::selection {
@@ -172,22 +190,32 @@
   clip-path: polygon(2.5rem 0, 100% 0, 100% 100%, 0 100%);
 }
 
+@utility top-strip-trapezoid {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 3rem 100%);
+}
+
 @utility prose-article {
   line-height: 1.75;
   color: var(--color-foreground);
+  overflow-wrap: break-word;
+  word-break: break-word;
 
   & h2 {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 600;
     margin-top: 2.25rem;
     margin-bottom: 0.75rem;
   }
 
   & h3 {
     font-size: 1.2rem;
-    font-weight: 700;
+    font-weight: 600;
     margin-top: 1.75rem;
     margin-bottom: 0.5rem;
+  }
+
+  & div {
+    margin-bottom: 1.1rem;
   }
 
   & p {
@@ -223,10 +251,13 @@
   & img {
     border-radius: var(--radius-lg);
     margin-bottom: 1.1rem;
+    max-width: 100%;
+    height: auto;
+    display: block;
   }
 
   & strong {
-    font-weight: 700;
+    font-weight: 600;
   }
 }
 

@@ -15,12 +15,14 @@ import {
   Menu,
   X,
   ExternalLink,
+  Info,
 } from "lucide-react";
 import { site } from "@/lib/site";
 import { adminLogout, type AdminUser } from "@/lib/admin.functions";
 
 const NAV = [
   { to: "/super/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/super/about", label: "About", icon: Info },
   { to: "/super/services", label: "Services", icon: Briefcase },
   { to: "/super/blog", label: "Blog studio", icon: Newspaper },
   { to: "/super/gallery", label: "Gallery", icon: ImageIcon },

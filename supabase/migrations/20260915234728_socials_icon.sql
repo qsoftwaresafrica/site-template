@@ -1,0 +1,1 @@
+ALTER TABLE public.socials ADD COLUMN IF NOT EXISTS icon text NOT NULL DEFAULT 'link';

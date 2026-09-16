@@ -5,6 +5,7 @@ import { listServices, listRecentArticles } from "@/lib/public.functions";
 import { Hero } from "@/components/site/Hero";
 import { Reveal } from "@/components/site/Reveal";
 import { Icon, imageOf } from "@/components/site/Icon";
+import { YearsOfExperience } from "@/components/site/YearsOfExperience";
 
 const rootApi = getRouteApi("__root__");
 
@@ -54,14 +55,15 @@ function HomePage() {
       </section>
 
       <section className="container-page py-20">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
           <Reveal>
             <div className="overflow-hidden rounded-xl">
               <img
                 src={boot.about?.image}
                 alt={`${site.brand.legalName} team at work`}
                 loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-105"
+                style={{ maxHeight: "420px" }}
               />
             </div>
           </Reveal>
@@ -75,9 +77,10 @@ function HomePage() {
                 {p}
               </p>
             ))}
+            <YearsOfExperience customersServed={boot.about?.customersServed ?? 500} />
             <Link
               to="/about-us"
-              className="mt-7 inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+              className="mt-5 inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
             >
               Read more <ArrowRight size={16} />
             </Link>

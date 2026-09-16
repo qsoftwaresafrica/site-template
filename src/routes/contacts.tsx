@@ -4,7 +4,7 @@ import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import { site, pageTitle } from "@/lib/site";
 import { submitInquiry } from "@/lib/public.functions";
 import { Reveal } from "@/components/site/Reveal";
-import { Icon, socialIcons } from "@/components/site/Icon";
+import { Icon, SocialIcon, socialIcons } from "@/components/site/Icon";
 import { PageBanner } from "@/components/site/PageBanner";
 
 const rootApi = getRouteApi("__root__");
@@ -193,7 +193,7 @@ function ContactsPage() {
                   aria-label={s.platform}
                   className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-secondary-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
                 >
-                  <Icon name={socialIcons[s.platform] ?? "link"} size={16} />
+                   <SocialIcon platform={s.platform} size={16} />
                 </a>
               ))}
             </div>

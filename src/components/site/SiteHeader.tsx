@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X, Phone, Mail, ChevronDown } from "lucide-react";
 import { site } from "@/lib/site";
-import { Icon, socialIcons } from "./Icon";
+import { Icon, SocialIcon, socialIcons } from "./Icon";
 import type { Bootstrap } from "@/lib/public.functions";
 
 export function SiteHeader({ data }: { data: Bootstrap }) {
@@ -47,9 +47,10 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
       }`}
     >
       {/* thin ink stripe with socials */}
-      <div className="bg-ink text-ink-foreground">
-        <div className="container-page flex h-9 items-center justify-between gap-4 text-xs">
-          <p className="truncate opacity-80">{site.brand.motto}</p>
+      <div className="lg:bg-white">
+        <div className="bg-ink text-ink-foreground lg:w-[70%] lg:ml-auto lg:top-strip-trapezoid">
+          <div className="container-page flex h-9 items-center justify-between gap-4 text-xs lg:max-w-none lg:justify-end">
+          <p className="truncate opacity-80 lg:hidden">{site.brand.motto}</p>
           <div className="flex shrink-0 items-center gap-3">
             {data.socials.map((s) => (
               <a
@@ -60,11 +61,12 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
                 aria-label={s.platform}
                 className="opacity-80 transition-opacity hover:opacity-100"
               >
-                <Icon name={socialIcons[s.platform] ?? "link"} size={14} />
+                 <SocialIcon platform={s.platform} size={14} />
               </a>
             ))}
           </div>
         </div>
+      </div>
       </div>
 
       {/* brand bar */}
@@ -78,13 +80,13 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
               alt={`${site.brand.legalName} logo`}
               width={44}
               height={44}
-              className="h-11 w-11 shrink-0 object-contain"
+              className="h-11 w-11 shrink-0 object-contain lg:h-20 lg:w-20 lg:-mt-6 lg:-ml-12"
             />
-            <span className="min-w-0">
-              <span className="block truncate font-display text-lg font-extrabold uppercase tracking-tight sm:text-xl">
+            <span className="min-w-0 lg:-mt-6">
+              <span className="block truncate font-display text-lg font-extrabold uppercase tracking-tight sm:text-xl lg:text-[1.75rem]">
                 {site.brand.name}
               </span>
-              <span className="block truncate text-xs text-muted-foreground">
+              <span className="block truncate text-xs text-muted-foreground lg:text-base">
                 {site.brand.tagline}
               </span>
             </span>

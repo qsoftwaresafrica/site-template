@@ -9,14 +9,15 @@ class LocalQueryBuilder {
   private columns: string | null = null;
   private count: "exact" | "planned" | "estimated" | null = null;
   private where: { column: string; operator: string; value: Json }[] = [];
-  private or: string | null = null;
-  private order: { column: string; ascending: boolean } | null = null;
-  private limit: number | null = null;
+  private _or: string | null = null;
+  private _order: { column: string; ascending: boolean } | null = null;
+  private _limit: number | null = null;
   private offset: number | null = null;
   private insertData: Record<string, Json> | null = null;
   private updateData: Record<string, Json> | null = null;
   private isDelete = false;
   private returning = false;
+  private upsertData: Record<string, Json> | null = null;
 
   constructor(sql: ReturnType<typeof postgres>, table: string) {
     this.sql = sql;
@@ -41,23 +42,23 @@ class LocalQueryBuilder {
   }
 
   or(condition: string) {
-    this.or = condition;
+    this._or = condition;
     return this;
   }
 
   order(column: string, options?: { ascending?: boolean }) {
-    this.order = { column, ascending: options?.ascending ?? true };
+    this._order = { column, ascending: options?.ascending ?? true };
     return this;
   }
 
   limit(count: number) {
-    this.limit = count;
+    this._limit = count;
     return this;
   }
 
   range(start: number, end: number) {
     this.offset = start;
-    this.limit = end - start + 1;
+    this._limit = end - start + 1;
     return this;
   }
 
@@ -76,8 +77,14 @@ class LocalQueryBuilder {
     return this;
   }
 
+  upsert(values: Record<string, Json>) {
+    this.upsertData = values;
+    this.returning = true;
+    return this;
+  }
+
   async maybeSingle(): Promise<{ data: Record<string, Json> | null; error: any; count?: number }> {
-    this.limit = 1;
+    this._limit = 1;
     const result = await this.execute();
     return { data: result.data.length > 0 ? result.data[0] : null, error: null, count: result.count };
   }
@@ -114,6 +121,22 @@ class LocalQueryBuilder {
         params.push(value);
       }
       query += setClauses.join(", ");
+    } else if (this.upsertData) {
+      const keys = Object.keys(this.upsertData);
+      const values = Object.values(this.upsertData);
+      const returnColumns = this.columns || "*";
+      const conflictCol = keys.includes("id") ? "id" : keys[0];
+      const setClauses = keys
+        .filter((k) => k !== conflictCol)
+        .map((k) => `"${k}" = EXCLUDED."${k}"`);
+      const conflictClause =
+        setClauses.length > 0
+          ? `ON CONFLICT ("${conflictCol}") DO UPDATE SET ${setClauses.join(", ")}`
+          : `ON CONFLICT ("${conflictCol}") DO NOTHING`;
+      query = `INSERT INTO "${this.table}" (${keys.map((k) => `"${k}"`).join(", ")}) VALUES (${keys.map((_, i) => `$${params.length + i + 1}`).join(", ")}) ${conflictClause} RETURNING ${returnColumns}`;
+      params.push(...values);
+      const upsertResult = await this.sql.unsafe(query, params);
+      return { data: upsertResult, error: null, count: upsertResult.length };
     } else if (this.insertData) {
       const keys = Object.keys(this.insertData);
       const values = Object.values(this.insertData);
@@ -140,7 +163,7 @@ class LocalQueryBuilder {
       return { data: [], error: { message: "No columns selected" } };
     }
 
-    if (this.where.length > 0 || this.or) {
+    if (this.where.length > 0 || this._or) {
       query += " WHERE ";
       const clauses: string[] = [];
 
@@ -149,8 +172,8 @@ class LocalQueryBuilder {
         params.push(cond.value);
       }
 
-      if (this.or) {
-        const parts = this.or.split(",");
+      if (this._or) {
+        const parts = this._or.split(",");
         const orClauses: string[] = [];
         for (const part of parts) {
           const [col, op, ...valParts] = part.split(".");
@@ -169,14 +192,14 @@ class LocalQueryBuilder {
       query += clauses.join(" AND ");
     }
 
-    if (this.order) {
-      query += ` ORDER BY "${this.order.column}" ${this.order.ascending ? "ASC" : "DESC"}`;
+    if (this._order) {
+      query += ` ORDER BY "${this._order.column}" ${this._order.ascending ? "ASC" : "DESC"}`;
     }
 
-    if (this.offset !== null && this.limit !== null) {
-      query += ` LIMIT ${this.limit} OFFSET ${this.offset}`;
-    } else if (this.limit !== null) {
-      query += ` LIMIT ${this.limit}`;
+    if (this.offset !== null && this._limit !== null) {
+      query += ` LIMIT ${this._limit} OFFSET ${this.offset}`;
+    } else if (this._limit !== null) {
+      query += ` LIMIT ${this._limit}`;
     }
 
     try {

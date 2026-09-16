@@ -184,7 +184,7 @@ export const adminListArticles = createServerFn({ method: "GET" })
     await guard();
     let query = (await client())
       .from("articles")
-      .select("id,slug,title,excerpt,status,author,tags,cover_id,cover_url,published_at,updated_at")
+      .select("id,slug,title,excerpt,body,status,author,tags,cover_id,cover_url,published_at,updated_at")
       .order("updated_at", { ascending: false })
       .limit(200);
     if (data.status && data.status !== "all") query = query.eq("status", data.status);
@@ -410,7 +410,7 @@ export const adminListSocials = createServerFn({ method: "GET" }).handler(async 
   await guard();
   const { data } = await (await client())
     .from("socials")
-    .select("id,platform,url,enabled,order_index")
+    .select("id,platform,url,enabled,order_index,icon")
     .order("order_index");
   return data ?? [];
 });
@@ -426,6 +426,7 @@ export const saveSocials = createServerFn({ method: "POST" })
             url: z.string().max(400).default(""),
             enabled: z.boolean().default(false),
             order_index: z.number().int().default(0),
+            icon: z.string().default("link"),
           }),
         ),
       })

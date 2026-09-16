@@ -33,6 +33,7 @@ export type AboutSettings = {
   paragraphs: string[];
   highlight: string;
   image: string;
+  customersServed: number;
 };
 
 export type Social = { platform: string; url: string; enabled: boolean };
