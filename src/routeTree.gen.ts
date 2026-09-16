@@ -27,6 +27,7 @@ import { Route as SuperHeroRouteImport } from './routes/super.hero'
 import { Route as SuperLoginRouteImport } from './routes/super.login'
 import { Route as SuperServicesRouteImport } from './routes/super.services'
 import { Route as SuperSocialsRouteImport } from './routes/super.socials'
+import { Route as SuperTeamRouteImport } from './routes/super.team'
 import { Route as ApiPublicMediaIdRouteImport } from './routes/api/public/media.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -119,6 +120,11 @@ const SuperSocialsRoute = SuperSocialsRouteImport.update({
   path: '/socials',
   getParentRoute: () => SuperRoute,
 } as any)
+const SuperTeamRoute = SuperTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => SuperRoute,
+} as any)
 const ApiPublicMediaIdRoute = ApiPublicMediaIdRouteImport.update({
   id: '/api/public/media/$id',
   path: '/api/public/media/$id',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
   '/super/socials': typeof SuperSocialsRoute
+  '/super/team': typeof SuperTeamRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super/': typeof SuperIndexRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
   '/super/socials': typeof SuperSocialsRoute
+  '/super/team': typeof SuperTeamRoute
   '/blog': typeof BlogIndexRoute
   '/services': typeof ServicesIndexRoute
   '/super': typeof SuperIndexRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/super/login': typeof SuperLoginRoute
   '/super/services': typeof SuperServicesRoute
   '/super/socials': typeof SuperSocialsRoute
+  '/super/team': typeof SuperTeamRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super/': typeof SuperIndexRoute
@@ -206,6 +215,7 @@ export interface FileRouteTypes {
     | '/super/login'
     | '/super/services'
     | '/super/socials'
+    | '/super/team'
     | '/blog/'
     | '/services/'
     | '/super/'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/super/login'
     | '/super/services'
     | '/super/socials'
+    | '/super/team'
     | '/blog'
     | '/services'
     | '/super'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/super/login'
     | '/super/services'
     | '/super/socials'
+    | '/super/team'
     | '/blog/'
     | '/services/'
     | '/super/'
@@ -396,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperSocialsRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/team': {
+      id: '/super/team'
+      path: '/team'
+      fullPath: '/super/team'
+      preLoaderRoute: typeof SuperTeamRouteImport
+      parentRoute: typeof SuperRoute
+    }
     '/api/public/media/$id': {
       id: '/api/public/media/$id'
       path: '/api/public/media/$id'
@@ -413,6 +432,7 @@ interface SuperRouteChildren {
   SuperLoginRoute: typeof SuperLoginRoute
   SuperServicesRoute: typeof SuperServicesRoute
   SuperSocialsRoute: typeof SuperSocialsRoute
+  SuperTeamRoute: typeof SuperTeamRoute
   SuperIndexRoute: typeof SuperIndexRoute
 }
 
@@ -423,6 +443,7 @@ const SuperRouteChildren: SuperRouteChildren = {
   SuperLoginRoute: SuperLoginRoute,
   SuperServicesRoute: SuperServicesRoute,
   SuperSocialsRoute: SuperSocialsRoute,
+  SuperTeamRoute: SuperTeamRoute,
   SuperIndexRoute: SuperIndexRoute,
 }
 
