@@ -118,6 +118,7 @@ function ArticlePage() {
             src={cover}
             alt={article.title}
             className="aspect-[16/8] w-full rounded-xl object-cover"
+            decoding="async"
           />
         </Reveal>
       ) : null}

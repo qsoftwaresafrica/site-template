@@ -23,7 +23,7 @@ export const Route = createFileRoute("/super/team")({
 });
 
 function TeamAdmin() {
-  const rows = Route.useLoaderData();
+  const { rows } = Route.useLoaderData() as { rows: any[]; total: number; page: number; pageSize: number; totalPages: number };
   const router = useRouter();
   const [draft, setDraft] = useState<Draft | null>(null);
   const { loading, execute } = useAction();

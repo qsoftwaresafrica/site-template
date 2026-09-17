@@ -140,6 +140,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const data = Route.useLoaderData();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isNavigating = useRouterState({ select: (s) => s.status === "pending" });
   const isAdmin = pathname === "/super" || pathname.startsWith("/super/");
 
   if (isAdmin) {
@@ -172,7 +173,7 @@ function RootComponent() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
       />
       <div className="flex min-h-screen flex-col">
-        <SiteHeader data={data} />
+        <SiteHeader data={data} isNavigating={isNavigating} />
         <main className="flex-1">
           {/* Required: nested routes render here. */}
           <Outlet />

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import type { Json } from "@/integrations/supabase/types";
+import { dbProvider } from "./db.server";
 
 export type AdminUser = {
   id: string;
@@ -193,14 +194,32 @@ const serviceSchema = z.object({
   published: z.boolean().default(true),
 });
 
-export const adminListServices = createServerFn({ method: "GET" }).handler(async () => {
-  await guard();
-  const { data } = await (await client())
-    .from("services")
-    .select("id,slug,title,summary,body,icon,image_id,highlights,order_index,published")
-    .order("order_index");
-  return data ?? [];
-});
+export const adminListServices = createServerFn({ method: "GET" })
+  .validator((d: { page?: number; pageSize?: number } | undefined) =>
+    z
+      .object({
+        page: z.number().int().min(1).optional(),
+        pageSize: z.number().int().min(10).max(200).optional(),
+      })
+      .parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    await guard();
+    const page = data.page ?? 1;
+    const pageSize = data.pageSize ?? 50;
+    const { data: rows, count } = await (await client())
+      .from("services")
+      .select("id,slug,title,summary,body,icon,image_id,highlights,order_index,published", { count: "exact" })
+      .order("order_index")
+      .range((page - 1) * pageSize, page * pageSize - 1);
+    return {
+      rows: rows ?? [],
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+    };
+  });
 
 export const saveService = createServerFn({ method: "POST" })
   .validator((d: unknown) => serviceSchema.parse(d))
@@ -400,14 +419,32 @@ export const deletePhoto = createServerFn({ method: "POST" })
 
 /* ---------------------------------------------------------------- team --- */
 
-export const adminListTeam = createServerFn({ method: "GET" }).handler(async () => {
-  await guard();
-  const { data } = await (await client())
-    .from("team_members")
-    .select("id,name,role,bio,photo_id,photo_url,order_index")
-    .order("order_index");
-  return data ?? [];
-});
+export const adminListTeam = createServerFn({ method: "GET" })
+  .validator((d: { page?: number; pageSize?: number } | undefined) =>
+    z
+      .object({
+        page: z.number().int().min(1).optional(),
+        pageSize: z.number().int().min(10).max(200).optional(),
+      })
+      .parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    await guard();
+    const page = data.page ?? 1;
+    const pageSize = data.pageSize ?? 50;
+    const { data: rows, count } = await (await client())
+      .from("team_members")
+      .select("id,name,role,bio,photo_id,photo_url,order_index", { count: "exact" })
+      .order("order_index")
+      .range((page - 1) * pageSize, page * pageSize - 1);
+    return {
+      rows: rows ?? [],
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+    };
+  });
 
 export const saveTeamMember = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
@@ -530,14 +567,32 @@ export const deleteUser = createServerFn({ method: "POST" })
 
 /* ------------------------------------------------------------- socials --- */
 
-export const adminListSocials = createServerFn({ method: "GET" }).handler(async () => {
-  await guard();
-  const { data } = await (await client())
-    .from("socials")
-    .select("id,platform,url,enabled,order_index,icon")
-    .order("order_index");
-  return data ?? [];
-});
+export const adminListSocials = createServerFn({ method: "GET" })
+  .validator((d: { page?: number; pageSize?: number } | undefined) =>
+    z
+      .object({
+        page: z.number().int().min(1).optional(),
+        pageSize: z.number().int().min(10).max(200).optional(),
+      })
+      .parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    await guard();
+    const page = data.page ?? 1;
+    const pageSize = data.pageSize ?? 50;
+    const { data: rows, count } = await (await client())
+      .from("socials")
+      .select("id,platform,url,enabled,order_index,icon", { count: "exact" })
+      .order("order_index")
+      .range((page - 1) * pageSize, page * pageSize - 1);
+    return {
+      rows: rows ?? [],
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+    };
+  });
 
 export const saveSocials = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
@@ -559,11 +614,22 @@ export const saveSocials = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await guard();
     const c = await client();
-    for (const row of data.rows) {
-      const { error } = row.id
-        ? await c.from("socials").update(row).eq("id", row.id)
-        : await c.from("socials").insert(row);
-      if (error) throw new Error(error.message);
+    if (dbProvider() === "local" && typeof (c as any).transaction === "function") {
+      await (c as any).transaction(async (tx: any) => {
+        for (const row of data.rows) {
+          const { error } = row.id
+            ? await tx.from("socials").update(row).eq("id", row.id)
+            : await tx.from("socials").insert(row);
+          if (error) throw new Error(error.message);
+        }
+      });
+    } else {
+      for (const row of data.rows) {
+        const { error } = row.id
+          ? await c.from("socials").update(row).eq("id", row.id)
+          : await c.from("socials").insert(row);
+        if (error) throw new Error(error.message);
+      }
     }
     return { ok: true };
   });

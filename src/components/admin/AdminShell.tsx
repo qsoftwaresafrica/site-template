@@ -20,6 +20,7 @@ import {
   Globe,
   ChevronDown,
   User,
+  HeartHandshake,
 } from "lucide-react";
 import { site } from "@/lib/site";
 import { adminLogout, type AdminUser } from "@/lib/admin.functions";
@@ -37,6 +38,7 @@ const NAV = [
   { to: "/super/team", label: "Team", icon: Users },
   { to: "/super/inquiries", label: "Inquiries", icon: Inbox },
   { to: "/super/users", label: "Users", icon: UserCog },
+  { to: "/super/help", label: "Need Help?", icon: HeartHandshake },
 ] as const;
 
 export function AdminShell({ user, children }: { user: AdminUser; children: ReactNode }) {
@@ -160,6 +162,7 @@ export function AdminShell({ user, children }: { user: AdminUser; children: Reac
                       src={imageOf(user.photo_id, null)}
                       alt=""
                       className="h-8 w-8 rounded-full object-cover"
+                      decoding="async"
                     />
                   ) : (
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">

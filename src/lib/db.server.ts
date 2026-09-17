@@ -228,17 +228,37 @@ class LocalQueryBuilder {
   }
 }
 
-function createLocalClient() {
+let cachedLocalSql: ReturnType<typeof postgres> | null = null;
+
+function getLocalSql() {
   const connectionString = process.env["LOCAL_DB_URL"];
   if (!connectionString) {
     throw new Error("LOCAL_DB_URL is required for local database");
   }
+  if (!cachedLocalSql) {
+    cachedLocalSql = postgres(connectionString, {
+      prepare: false,
+      query_timeout: 30000,
+    });
+  }
+  return cachedLocalSql;
+}
 
-  const sql = postgres(connectionString, { prepare: false });
-
+function createLocalClient() {
+  const sql = getLocalSql();
   return {
     from(table: string) {
       return new LocalQueryBuilder(sql, table);
+    },
+    async transaction(fn: (tx: { from(table: string): LocalQueryBuilder }) => Promise<void>) {
+      return sql.begin(async (txSql) => {
+        const txClient = {
+          from(table: string) {
+            return new LocalQueryBuilder(txSql as ReturnType<typeof postgres>, table);
+          },
+        };
+        await fn(txClient);
+      });
     },
   };
 }

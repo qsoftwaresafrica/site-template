@@ -42,7 +42,7 @@ function LoginPage() {
         className="w-full max-w-sm space-y-5 rounded-xl border border-border bg-card p-7 shadow-lg"
       >
         <div className="flex flex-col items-center text-center">
-          <img src={site.brand.logo} alt="" className="h-12 w-12 rounded" />
+          <img src={site.brand.logo} alt="" className="h-12 w-12 rounded" decoding="async" />
           <h1 className="mt-3 font-display text-xl font-black">{site.brand.name} control panel</h1>
           <p className="text-sm text-muted-foreground">Sign in to manage the website.</p>
         </div>

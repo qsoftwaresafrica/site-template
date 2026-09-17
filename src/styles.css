@@ -472,6 +472,22 @@
   }
 }
 
+@keyframes route-progress-sweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.route-progress-stripe {
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary), color-mix(in oklch, var(--color-primary) 70%, white), var(--color-primary));
+  background-size: 200% 100%;
+  animation: route-progress-sweep 1s linear infinite;
+}
+
 @keyframes shimmer {
   0% {
     background-position: 150% 0;

@@ -1,22 +1,36 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu, X, Phone, Mail, ChevronDown } from "lucide-react";
 import { site } from "@/lib/site";
 import { Icon, SocialIcon, socialIcons } from "./Icon";
 import type { Bootstrap } from "@/lib/public.functions";
 
-export function SiteHeader({ data }: { data: Bootstrap }) {
+export function SiteHeader({ data, isNavigating }: { data: Bootstrap; isNavigating?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [topHeight, setTopHeight] = useState(0);
+  const topRef = useRef<HTMLDivElement>(null);
+
+  // Measure top portion height (socials + brand bar) on mount and resize
+  const measureTop = useCallback(() => {
+    if (topRef.current) {
+      setTopHeight(topRef.current.offsetHeight);
+    }
+  }, []);
+
+  useEffect(() => {
+    measureTop();
+    window.addEventListener("resize", measureTop);
+    return () => window.removeEventListener("resize", measureTop);
+  }, [measureTop]);
 
   useEffect(() => {
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 8);
-      // Hide when scrolling down past the header height, show when scrolling up.
-      // Always visible near the top so it never vanishes over the hero.
+      // Hide top portion when scrolling down, show when scrolling up
       if (y < 80) {
         setHidden(false);
       } else if (y > lastY + 4) {
@@ -42,10 +56,15 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-transform duration-300 ease-out ${
-        hidden && !open ? "-translate-y-full" : "translate-y-0"
-      }`}
+      className="sticky top-0 z-50 transition-transform duration-300 ease-out"
+      style={{ transform: hidden && !open ? `translateY(-${topHeight}px)` : "translateY(0)" }}
     >
+      {isNavigating ? (
+        <div className="route-progress-stripe" aria-hidden="true" />
+      ) : null}
+
+      {/* top portion: socials + brand bar (slides away on scroll down) */}
+      <div ref={topRef}>
       {/* thin ink stripe with socials */}
       <div className="lg:bg-white">
         <div className="bg-ink text-ink-foreground lg:w-[70%] lg:ml-auto lg:top-strip-trapezoid">
@@ -81,6 +100,7 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
               width={44}
               height={44}
               className="h-11 w-11 shrink-0 object-contain lg:h-20 lg:w-20 lg:-mt-6 lg:-ml-12"
+              decoding="async"
             />
             <span className="min-w-0 lg:-mt-6">
               <span className="block truncate font-brand text-lg font-extrabold uppercase tracking-tight sm:text-xl lg:text-[1.75rem]">
@@ -124,8 +144,9 @@ export function SiteHeader({ data }: { data: Bootstrap }) {
           </button>
         </div>
       </div>
+      </div>{/* end top portion */}
 
-      {/* nav bar */}
+      {/* nav bar – always visible; stays at top when top portion is hidden */}
       <nav className="hidden bg-primary text-primary-foreground lg:block">
         <div className="container-page">
           <ul className="ml-auto flex w-fit items-stretch">

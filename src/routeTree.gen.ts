@@ -27,6 +27,7 @@ import { Route as SuperBlogRouteImport } from './routes/super.blog'
 import { Route as SuperContactsRouteImport } from './routes/super.contacts'
 import { Route as SuperDashboardRouteImport } from './routes/super.dashboard'
 import { Route as SuperGalleryRouteImport } from './routes/super.gallery'
+import { Route as SuperHelpRouteImport } from './routes/super.help'
 import { Route as SuperHeroRouteImport } from './routes/super.hero'
 import { Route as SuperInquiriesRouteImport } from './routes/super.inquiries'
 import { Route as SuperLoginRouteImport } from './routes/super.login'
@@ -127,6 +128,11 @@ const SuperGalleryRoute = SuperGalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => SuperRoute,
 } as any)
+const SuperHelpRoute = SuperHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => SuperRoute,
+} as any)
 const SuperHeroRoute = SuperHeroRouteImport.update({
   id: '/hero',
   path: '/hero',
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/super/contacts': typeof SuperContactsRoute
   '/super/dashboard': typeof SuperDashboardRoute
   '/super/gallery': typeof SuperGalleryRoute
+  '/super/help': typeof SuperHelpRoute
   '/super/hero': typeof SuperHeroRoute
   '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/super/contacts': typeof SuperContactsRoute
   '/super/dashboard': typeof SuperDashboardRoute
   '/super/gallery': typeof SuperGalleryRoute
+  '/super/help': typeof SuperHelpRoute
   '/super/hero': typeof SuperHeroRoute
   '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/super/contacts': typeof SuperContactsRoute
   '/super/dashboard': typeof SuperDashboardRoute
   '/super/gallery': typeof SuperGalleryRoute
+  '/super/help': typeof SuperHelpRoute
   '/super/hero': typeof SuperHeroRoute
   '/super/inquiries': typeof SuperInquiriesRoute
   '/super/login': typeof SuperLoginRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/super/contacts'
     | '/super/dashboard'
     | '/super/gallery'
+    | '/super/help'
     | '/super/hero'
     | '/super/inquiries'
     | '/super/login'
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/super/contacts'
     | '/super/dashboard'
     | '/super/gallery'
+    | '/super/help'
     | '/super/hero'
     | '/super/inquiries'
     | '/super/login'
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/super/contacts'
     | '/super/dashboard'
     | '/super/gallery'
+    | '/super/help'
     | '/super/hero'
     | '/super/inquiries'
     | '/super/login'
@@ -493,6 +505,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperGalleryRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/help': {
+      id: '/super/help'
+      path: '/help'
+      fullPath: '/super/help'
+      preLoaderRoute: typeof SuperHelpRouteImport
+      parentRoute: typeof SuperRoute
+    }
     '/super/hero': {
       id: '/super/hero'
       path: '/hero'
@@ -565,6 +584,7 @@ interface SuperRouteChildren {
   SuperContactsRoute: typeof SuperContactsRoute
   SuperDashboardRoute: typeof SuperDashboardRoute
   SuperGalleryRoute: typeof SuperGalleryRoute
+  SuperHelpRoute: typeof SuperHelpRoute
   SuperHeroRoute: typeof SuperHeroRoute
   SuperInquiriesRoute: typeof SuperInquiriesRoute
   SuperLoginRoute: typeof SuperLoginRoute
@@ -582,6 +602,7 @@ const SuperRouteChildren: SuperRouteChildren = {
   SuperContactsRoute: SuperContactsRoute,
   SuperDashboardRoute: SuperDashboardRoute,
   SuperGalleryRoute: SuperGalleryRoute,
+  SuperHelpRoute: SuperHelpRoute,
   SuperHeroRoute: SuperHeroRoute,
   SuperInquiriesRoute: SuperInquiriesRoute,
   SuperLoginRoute: SuperLoginRoute,

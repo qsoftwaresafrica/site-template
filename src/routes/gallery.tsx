@@ -82,6 +82,7 @@ function GalleryPage() {
                         width={p.width ?? undefined}
                         height={p.height ?? undefined}
                         loading="lazy"
+                        decoding="async"
                         className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       {p.caption ? (
@@ -117,7 +118,8 @@ function GalleryPage() {
             <img
               src={imageOf(current.media_id, current.image_url) as string}
               alt={current.caption ?? "Gallery photo"}
-              className="max-h-[80vh] w-full rounded-lg object-contain"
+              className="max-h-[90vh] max-w-full rounded-lg object-contain"
+              decoding="async"
             />
             {current.caption ? (
               <figcaption className="mt-3 text-center text-sm text-ink-foreground/80">

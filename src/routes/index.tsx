@@ -62,6 +62,7 @@ function HomePage() {
                 src={boot.about?.image}
                 alt={`${site.brand.legalName} team at work`}
                 loading="lazy"
+                decoding="async"
                 className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-105"
                 style={{ maxHeight: "420px" }}
               />

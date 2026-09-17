@@ -73,6 +73,7 @@ function BlogIndex() {
                           src={imageOf(a.cover_id, a.cover_url) as string}
                           alt={a.title}
                           loading="lazy"
+                          decoding="async"
                           className="aspect-[16/10] w-full object-cover transition-transform duration-500 hover:scale-105"
                         />
                       </Link>

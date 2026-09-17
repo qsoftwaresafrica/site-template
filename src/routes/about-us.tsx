@@ -75,6 +75,7 @@ function AboutPage() {
                       src={imageOf(m.photo_id, m.photo_url) ?? site.brand.logo}
                       alt={`${m.name}, ${m.role}`}
                       loading="lazy"
+                      decoding="async"
                       className="aspect-[4/5] w-full object-cover"
                     />
                     <div className="p-5">

@@ -174,6 +174,8 @@ export function ImagePicker({
                 src={preview}
                 alt=""
                 className="max-h-[85vh] max-w-full rounded-md object-contain shadow-2xl"
+                loading="lazy"
+                decoding="async"
                 onClick={(e) => e.stopPropagation()}
               />
             </div>,
