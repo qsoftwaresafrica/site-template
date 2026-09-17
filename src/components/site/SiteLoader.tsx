@@ -6,26 +6,26 @@ const MIN_DISPLAY_MS = 2000;
 const FADE_OUT_MS = 500;
 
 export function SiteLoader() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !sessionStorage.getItem(STORAGE_KEY);
+  });
   const [hiding, setHiding] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (sessionStorage.getItem(STORAGE_KEY)) return;
+    if (!visible) return;
 
     sessionStorage.setItem(STORAGE_KEY, "1");
 
-    const showTimer = window.setTimeout(() => setVisible(true), 60);
     const hideTimer = window.setTimeout(() => {
       setHiding(true);
       window.setTimeout(() => setVisible(false), FADE_OUT_MS);
     }, MIN_DISPLAY_MS);
 
     return () => {
-      window.clearTimeout(showTimer);
       window.clearTimeout(hideTimer);
     };
-  }, []);
+  }, [visible]);
 
   if (!visible) return null;
 
