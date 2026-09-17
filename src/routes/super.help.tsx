@@ -1,4 +1,4 @@
-import { createFileRoute, useRouteData } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock, HeartHandshake } from "lucide-react";
 import { PageHeading, Panel } from "@/components/admin/ui";
 import { getSetting } from "@/lib/admin.functions";
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/super/help")({
 });
 
 function HelpPage() {
-  const contacts = useRouteData({ from: "/super/help" });
+  const contacts = Route.useLoaderData() as ContactSettings;
 
   return (
     <div className="mx-auto max-w-3xl">
